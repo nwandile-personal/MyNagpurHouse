@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Ghar Banao</title>
+<title>My Nagpur House</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -291,10 +291,6 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
 .drive-status .dot.on{background:var(--green);}
 
 /* ─── FONT SIZE ─── */
-html[data-font='small']{--base-font:14px;}
-html[data-font='medium']{--base-font:16px;}
-html[data-font='large']{--base-font:19px;}
-html[data-font='xlarge']{--base-font:22px;}
 .font-size-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 .fs-btn{flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--line2);border-radius:var(--r);background:none;color:var(--ink2);cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;text-align:center;transition:all .15s;line-height:1.3;}
 .fs-btn:hover{border-color:var(--amber);}
@@ -375,6 +371,104 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
 .lightbox img,.lightbox video{max-width:96vw;max-height:92vh;object-fit:contain;border-radius:8px;}
 .lb-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
+
+/* ═══════════════════════════════════════════════════════════
+   SCALABLE FONT SIZES — all em-based so --base-font applies
+   across every element in the app
+   ═══════════════════════════════════════════════════════════ */
+
+/* Page structure */
+.page-title        { font-size: 1.37em; }   /* ~26px at large */
+.page-sub          { font-size: 0.79em; }
+.section-label     { font-size: 0.63em; }
+
+/* Sidebar */
+.sidebar-logo h1   { font-size: 1.26em; }
+.sidebar-logo p    { font-size: 0.65em; }
+.sidebar-total .lbl{ font-size: 0.6em; }
+.sidebar-total .val{ font-size: 1.15em; }
+.nav-item          { font-size: 0.79em; }
+.sidebar-drive     { font-size: 0.74em; }
+.sidebar-drive p   { font-size: 0.68em; }
+.sidebar-drive button { font-size: 0.68em; }
+
+/* Mobile header */
+.mobile-header h1  { font-size: 1.15em; }
+.mobile-header .htotal { font-size: 0.74em; }
+
+/* Stats */
+.stat-box .n       { font-size: 1.05em; }
+.stat-box .l       { font-size: 0.63em; }
+
+/* Expense list */
+.exp-vendor        { font-size: 0.95em; }
+.exp-meta          { font-size: 0.74em; }
+.exp-desc          { font-size: 0.74em; }
+.exp-transcript    { font-size: 0.68em; }
+.exp-tag           { font-size: 0.65em; }
+.exp-amount        { font-size: 1em; }
+.exp-voice-badge   { font-size: 0.65em; }
+
+/* Forms */
+.field label       { font-size: 0.7em; }
+input[type=text], input[type=number], input[type=date],
+input[type=email], input[type=tel], input[type=url],
+input[type=password], select, textarea { font-size: 0.9em; }
+.btn               { font-size: 0.84em; }
+.btn-sm            { font-size: 0.74em; }
+
+/* Upload */
+.upload-zone p     { font-size: 0.84em; }
+.upload-zone small { font-size: 0.72em; }
+.upload-msg        { font-size: 0.74em; }
+
+/* Voice */
+.rec-hint          { font-size: 0.74em; }
+
+/* Reminders */
+.rem-cal .day      { font-size: 1em; }
+.rem-cal .mon      { font-size: 0.6em; }
+.rem-title         { font-size: 0.84em; }
+.rem-notes         { font-size: 0.72em; }
+.rem-amount        { font-size: 0.84em; }
+.overdue-badge     { font-size: 0.6em; }
+
+/* Analytics */
+.bar-lbl           { font-size: 0.74em; }
+.bar-val           { font-size: 0.68em; }
+
+/* Settings */
+.cat-name-text     { font-size: 0.84em; }
+.toggle-lbl        { font-size: 0.84em; }
+.toggle-sub        { font-size: 0.72em; }
+.info-strip        { font-size: 0.74em; }
+.step-ol li        { font-size: 0.74em; }
+.step-ol li::before{ font-size: 0.63em; }
+code               { font-size: 0.68em; }
+.deploy-card h3    { font-size: 0.9em; }
+.deploy-card p     { font-size: 0.74em; }
+.badge             { font-size: 0.63em; }
+.budget-row        { font-size: 0.74em; }
+
+/* Modals */
+.modal-title       { font-size: 1.2em; }
+.detail-lbl        { font-size: 0.68em; }
+.detail-val input, .detail-val select, .detail-val textarea { font-size: 0.9em; }
+
+/* Contacts */
+.contact-name      { font-size: 0.95em; }
+.contact-meta      { font-size: 0.74em; }
+.contact-type-badge{ font-size: 0.68em; }
+.call-btn          { font-size: 0.74em; }
+.contact-avatar    { font-size: 1.05em; }
+.fav-star          { font-size: 1.1em; }
+
+/* Empty state */
+.empty-state p     { font-size: 0.84em; }
+
+/* Font size picker labels */
+.fs-btn .fs-label  { font-size: 0.58em; }
+
 </style>
 </head>
 <body>
@@ -383,7 +477,7 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
   <!-- SIDEBAR (desktop) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <h1>Ghar Banao</h1>
+      <h1>My Nagpur House</h1>
       <p>Construction tracker</p>
     </div>
     <div class="sidebar-total">
@@ -433,7 +527,7 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
     <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <h1>Ghar Banao</h1>
+    <h1>My Nagpur House</h1>
     <span class="htotal" id="mob-total">₹0</span>
   </div>
   <!-- DRAWER OVERLAY -->
@@ -442,7 +536,7 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
   <nav class="drawer" id="nav-drawer">
     <div class="drawer-top">
       <div class="drawer-logo">
-        <div style="font-family:'DM Serif Display',serif;font-size:1.3em">Ghar Banao</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3em">My Nagpur House</div>
         <div style="font-size:0.72em;color:var(--ink3);margin-top:2px">Construction tracker</div>
       </div>
       <button onclick="closeDrawer()" class="drawer-close">×</button>
@@ -531,7 +625,7 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
 
       <div class="section-label">Receipts &amp; photos</div>
       <div id="add-drive-warn" class="info-strip warn" style="display:none"><strong>Drive not connected.</strong> Files saved in browser only. Connect Drive in Settings.</div>
-      <div id="add-drive-ok" class="info-strip success" style="display:none">Drive connected — files upload directly to your GharBanao folder.</div>
+      <div id="add-drive-ok" class="info-strip success" style="display:none">Drive connected — files upload directly to your MyNagpurHouse folder.</div>
       <div class="upload-zone" onclick="document.getElementById('file-in').click()">
         <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <p>Tap to add photos, receipts, or videos</p>
