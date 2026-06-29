@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>My Nagpur House</title>
+<title>Ghar Banao</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -37,12 +37,11 @@
   }
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:var(--base-font,14px);line-height:1.6;-webkit-font-smoothing:antialiased;}
-html[data-font="medium"]{--base-font:16px;}
-html[data-font="large"]{--base-font:19px;}
-html[data-font="xlarge"]{--base-font:22px;}
-html[data-contrast="high"]{--ink:#000000;--ink2:#1a1a1a;--ink3:#444444;--paper:#ffffff;--paper2:#f0f0f0;--paper3:#d8d8d8;--line:rgba(0,0,0,.25);--line2:rgba(0,0,0,.4);--amber:#b35c00;--amber-bg:#fff0d0;--amber-text:#7a3500;}
-@media(prefers-color-scheme:dark){html[data-contrast="high"]{--ink:#ffffff;--ink2:#eeeeee;--ink3:#bbbbbb;--paper:#000000;--paper2:#111111;--paper3:#222222;}}
+html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:var(--base-font,19px);line-height:1.6;-webkit-font-smoothing:antialiased;}
+html[data-font='small']{--base-font:14px;}
+html[data-font='medium']{--base-font:16px;}
+html[data-font='large']{--base-font:19px;}
+html[data-font='xlarge']{--base-font:22px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--paper3);border-radius:4px;}
@@ -264,28 +263,118 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
 .pal-dot:hover{transform:scale(1.15);}
 .pal-dot.sel{border-color:var(--ink);}
 
-/* ─── FONT SIZE PICKER ─── */
+/* ─── BUDGET BAR ─── */
+.budget-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:5px;}
+
+/* ─── HAMBURGER ─── */
+.hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:6px;border-radius:6px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:all .2s;}
+@media(min-width:900px){.hamburger{display:none;}}
+
+/* ─── DRAWER ─── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;}
+.drawer-overlay.open{display:block;}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--paper);z-index:201;transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.18);}
+.drawer.open{transform:translateX(0);}
+@media(min-width:900px){.drawer{display:none;}}
+.drawer-top{display:flex;align-items:center;justify-content:space-between;padding:20px 18px 14px;}
+.drawer-logo{}
+.drawer-close{background:none;border:1px solid var(--line2);border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;justify-content:center;}
+.drawer-total{margin:0 14px 10px;background:var(--amber-bg);border-radius:var(--r);padding:12px 14px;}
+.drawer-item{display:flex;align-items:center;gap:12px;padding:13px 20px;font-size:1em;font-weight:400;color:var(--ink2);border:none;background:none;cursor:pointer;text-align:left;width:100%;transition:background .12s,color .12s;}
+.drawer-item svg{width:18px;height:18px;opacity:.7;flex-shrink:0;}
+.drawer-item:hover{background:var(--paper2);color:var(--ink);}
+.drawer-item.active{background:var(--paper2);color:var(--ink);font-weight:500;}
+.drawer-item.active svg{opacity:1;}
+.drive-status{display:flex;align-items:center;gap:7px;font-size:0.8em;color:var(--ink3);}
+.drive-status .dot{width:7px;height:7px;border-radius:50%;background:var(--paper3);flex-shrink:0;}
+.drive-status .dot.on{background:var(--green);}
+
+/* ─── FONT SIZE ─── */
+html[data-font='small']{--base-font:14px;}
+html[data-font='medium']{--base-font:16px;}
+html[data-font='large']{--base-font:19px;}
+html[data-font='xlarge']{--base-font:22px;}
 .font-size-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.fs-btn{flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--line2);border-radius:var(--r);background:none;color:var(--ink2);cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;text-align:center;transition:all .15s;}
-.fs-btn:hover{border-color:var(--amber);color:var(--ink);}
+.fs-btn{flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--line2);border-radius:var(--r);background:none;color:var(--ink2);cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;text-align:center;transition:all .15s;line-height:1.3;}
+.fs-btn:hover{border-color:var(--amber);}
 .fs-btn.active{border-color:var(--amber);background:var(--amber-bg);color:var(--amber-text);}
 .fs-btn .fs-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;opacity:.7;}
+
+/* ─── HIGH CONTRAST ─── */
+html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--paper2:#f0f0f0;--paper3:#d8d8d8;}
+@media(prefers-color-scheme:dark){html[data-contrast='high']{--ink:#fff;--ink2:#eee;--ink3:#bbb;--paper:#000;--paper2:#111;--paper3:#222;}}
+
+/* ─── EXPENSE DETAIL MODAL ─── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+@media(min-width:600px){.modal-overlay{align-items:center;}}
+.modal-sheet{background:var(--paper);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:0 0 32px;}
+@media(min-width:600px){.modal-sheet{border-radius:var(--r-lg);max-height:88vh;}}
+.modal-handle{width:36px;height:4px;background:var(--paper3);border-radius:2px;margin:12px auto 0;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--line);}
+.modal-title{font-family:'DM Serif Display',serif;font-size:1.3em;font-weight:400;}
+.modal-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:none;cursor:pointer;font-size:20px;color:var(--ink2);display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:18px 20px;}
+.detail-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+.detail-row:last-child{border-bottom:none;}
+.detail-lbl{font-size:0.75em;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;width:90px;flex-shrink:0;padding-top:8px;}
+.detail-val{flex:1;}
+.detail-val input,.detail-val select,.detail-val textarea{width:100%;border:1px solid var(--line2);border-radius:6px;padding:7px 10px;background:var(--paper2);color:var(--ink);font-size:0.93em;font-family:'Inter',sans-serif;outline:none;}
+.detail-val input:focus,.detail-val textarea:focus{border-color:var(--amber);}
+.detail-val textarea{min-height:64px;resize:vertical;}
+/* image previews in modal — big enough to judge */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:10px;}
+.media-thumb{border-radius:10px;overflow:hidden;background:var(--paper3);position:relative;aspect-ratio:1;cursor:pointer;border:1px solid var(--line);}
+.media-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.media-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
+.media-thumb .play-badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);}
+.media-thumb .play-badge svg{width:28px;height:28px;color:#fff;}
+.media-thumb .del-file{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.add-media-btn{border-radius:10px;border:1.5px dashed var(--line2);background:none;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:0.75em;gap:4px;}
+.add-media-btn svg{width:22px;height:22px;}
+
+/* ─── CONTACTS ─── */
+.contact-card{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+.contact-card:last-child{border-bottom:none;}
+.contact-avatar{width:46px;height:46px;border-radius:50%;background:var(--amber-bg);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.1em;font-weight:600;color:var(--amber-text);}
+.contact-avatar img{width:100%;height:100%;object-fit:cover;}
+.contact-body{flex:1;min-width:0;}
+.contact-name{font-size:1em;font-weight:500;color:var(--ink);}
+.contact-meta{font-size:0.8em;color:var(--ink3);margin-top:1px;}
+.contact-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.fav-star{background:none;border:none;cursor:pointer;font-size:18px;line-height:1;color:var(--ink3);transition:color .15s;}
+.fav-star.on{color:#f59e0b;}
+.call-btn{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);border:none;border-radius:20px;padding:5px 12px;font-size:0.8em;font-weight:500;cursor:pointer;text-decoration:none;}
+.call-btn svg{width:14px;height:14px;}
+.contact-type-badge{display:inline-block;font-size:0.72em;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:4px;background:var(--paper3);color:var(--ink2);font-weight:600;}
+
+/* ─── CONTACT DETAIL MODAL ─── */
+.cdetail-avatar{width:80px;height:80px;border-radius:50%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-size:2em;font-weight:600;color:var(--amber-text);overflow:hidden;margin:0 auto 12px;cursor:pointer;}
+.cdetail-avatar img{width:100%;height:100%;object-fit:cover;}
+.cdetail-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px;}
+.cdetail-photo{border-radius:8px;overflow:hidden;aspect-ratio:1;background:var(--paper3);border:1px solid var(--line);cursor:pointer;}
+.cdetail-photo img{width:100%;height:100%;object-fit:cover;display:block;}
 
 /* ─── PIN LOCK ─── */
 .pin-overlay{display:none;position:fixed;inset:0;background:var(--paper);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
 .pin-overlay.show{display:flex;}
-.pin-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--ink);}
-.pin-sub{font-size:13px;color:var(--ink3);}
+.pin-title{font-family:'DM Serif Display',serif;font-size:1.7em;}
+.pin-sub{font-size:0.93em;color:var(--ink3);}
 .pin-dots{display:flex;gap:14px;}
-.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line2);background:transparent;transition:background .15s;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line2);transition:background .15s;}
 .pin-dot.filled{background:var(--amber);border-color:var(--amber);}
-.pin-pad{display:grid;grid-template-columns:repeat(3,70px);gap:10px;}
-.pin-key{height:70px;border-radius:var(--r-lg);border:1.5px solid var(--line2);background:var(--paper2);font-size:22px;font-weight:500;color:var(--ink);cursor:pointer;transition:background .1s;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:10px;}
+.pin-key{height:72px;border-radius:var(--r-lg);border:1.5px solid var(--line2);background:var(--paper2);font-size:1.5em;font-weight:500;color:var(--ink);cursor:pointer;transition:background .1s;}
 .pin-key:active{background:var(--paper3);}
-.pin-error{font-size:13px;color:var(--red);min-height:18px;}
+.pin-error{font-size:0.9em;color:var(--red);min-height:18px;}
 
-/* ─── BUDGET BAR ─── */
-.budget-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:5px;}
+/* ─── LIGHTBOX (inline, no new tab) ─── */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9000;align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lightbox img,.lightbox video{max-width:96vw;max-height:92vh;object-fit:contain;border-radius:8px;}
+.lb-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
 </style>
 </head>
 <body>
@@ -294,7 +383,7 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
   <!-- SIDEBAR (desktop) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <h1>My Nagpur House</h1>
+      <h1>Ghar Banao</h1>
       <p>Construction tracker</p>
     </div>
     <div class="sidebar-total">
@@ -317,6 +406,10 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
       Reminders
     </button>
+    <button class="nav-item" onclick="showPage('contacts',this)" data-page="contacts">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Contacts
+    </button>
     <button class="nav-item" onclick="showPage('analytics',this)" data-page="analytics">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Analytics
@@ -337,34 +430,61 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
 
   <!-- MOBILE HEADER -->
   <div class="mobile-header">
+    <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
     <h1>Ghar Banao</h1>
     <span class="htotal" id="mob-total">₹0</span>
   </div>
-  <nav class="mobile-nav">
-    <button class="mnav-btn active" onclick="showPage('dashboard',this)" data-page="dashboard">
+  <!-- DRAWER OVERLAY -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <!-- DRAWER -->
+  <nav class="drawer" id="nav-drawer">
+    <div class="drawer-top">
+      <div class="drawer-logo">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3em">Ghar Banao</div>
+        <div style="font-size:0.72em;color:var(--ink3);margin-top:2px">Construction tracker</div>
+      </div>
+      <button onclick="closeDrawer()" class="drawer-close">×</button>
+    </div>
+    <div class="drawer-total">
+      <div style="font-size:0.72em;text-transform:uppercase;letter-spacing:.06em;color:var(--amber-text);margin-bottom:3px">Total spent</div>
+      <div id="mob-total-drawer" style="font-size:1.4em;font-weight:600;color:var(--amber-text)">₹0</div>
+    </div>
+    <button class="drawer-item active" onclick="navTo('dashboard')" data-page="dashboard">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Home
     </button>
-    <button class="mnav-btn" onclick="showPage('add',this)" data-page="add">
+    <button class="drawer-item" onclick="navTo('add')" data-page="add">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Add
+      Add Expense
     </button>
-    <button class="mnav-btn" onclick="showPage('expenses',this)" data-page="expenses">
+    <button class="drawer-item" onclick="navTo('expenses')" data-page="expenses">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-      Expenses
+      All Expenses
     </button>
-    <button class="mnav-btn" onclick="showPage('reminders',this)" data-page="reminders">
+    <button class="drawer-item" onclick="navTo('contacts')" data-page="contacts">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Contacts
+    </button>
+    <button class="drawer-item" onclick="navTo('reminders')" data-page="reminders">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
       Reminders
     </button>
-    <button class="mnav-btn" onclick="showPage('analytics',this)" data-page="analytics">
+    <button class="drawer-item" onclick="navTo('analytics')" data-page="analytics">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Analytics
     </button>
-    <button class="mnav-btn" onclick="showPage('settings',this)" data-page="settings">
+    <button class="drawer-item" onclick="navTo('settings')" data-page="settings">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Settings
     </button>
+    <div style="margin-top:auto;padding:16px 20px;border-top:1px solid var(--line)">
+      <div class="drive-status" style="font-size:0.8em">
+        <div class="dot" id="sb-drive-dot2"></div>
+        <span id="sb-drive-lbl2">Drive not connected</span>
+      </div>
+    </div>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -396,14 +516,18 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       <p class="page-sub">Every entry saved to Google Drive.</p>
       <div class="grid2">
         <div class="field"><label>Category</label><select id="new-cat"><option value="">Select…</option></select></div>
-        <div class="field"><label>Amount (₹)</label><input type="number" id="new-amt" placeholder="0" min="0" step="1"></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="new-amt" min="0" step="1"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Vendor / Supplier</label><input type="text" id="new-vendor" placeholder="Sharma Cement, Raju Labour…"></div>
-        <div class="field"><label>Date</label><input type="date" id="new-date"></div>
+        <div class="field"><label>Vendor / Supplier</label><input type="text" id="new-vendor"></div>
+        <div class="field"><label>Date of Expense <span style="font-size:0.75em;font-weight:400;color:var(--ink3)">when paid</span></label><input type="date" id="new-date"></div>
       </div>
-      <div class="field"><label>Description</label><textarea id="new-desc" placeholder="What exactly was purchased or paid for?"></textarea></div>
-      <div class="field"><label>Tags</label><input type="text" id="new-tags" placeholder="ground floor, Phase 1, urgent — comma separated"></div>
+      <div class="field">
+        <label>Date of Entry <span style="font-size:0.75em;font-weight:400;color:var(--ink3)">defaults to today</span></label>
+        <input type="date" id="new-entry-date">
+      </div>
+      <div class="field"><label>Description</label><textarea id="new-desc"></textarea></div>
+      <div class="field"><label>Tags</label><input type="text" id="new-tags"></div>
 
       <div class="section-label">Receipts &amp; photos</div>
       <div id="add-drive-warn" class="info-strip warn" style="display:none"><strong>Drive not connected.</strong> Files saved in browser only. Connect Drive in Settings.</div>
@@ -441,7 +565,7 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
     <section id="page-expenses" class="page">
       <h2 class="page-title">All expenses</h2>
       <div class="search-bar">
-        <input type="text" id="srch" placeholder="Search vendor, category, tags…" oninput="renderExpenses()">
+        <input type="text" id="srch" oninput="renderExpenses()">
         <select id="fcat" onchange="renderExpenses()"><option value="">All categories</option></select>
       </div>
       <div id="all-exp-list"></div>
@@ -453,12 +577,12 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       <p class="page-sub">Upcoming payments and deliveries.</p>
       <div class="card">
         <div class="section-label" style="margin-top:0">New reminder</div>
-        <div class="field"><label>What to remember</label><input type="text" id="rem-t" placeholder="Labour payment, cement delivery, electrician visit…"></div>
+        <div class="field"><label>What to remember</label><input type="text" id="rem-t"></div>
         <div class="grid2">
           <div class="field"><label>Due date</label><input type="date" id="rem-d"></div>
-          <div class="field"><label>Amount (₹, optional)</label><input type="number" id="rem-a" placeholder="0"></div>
+          <div class="field"><label>Amount (₹, optional)</label><input type="number" id="rem-a"></div>
         </div>
-        <div class="field"><label>Notes</label><input type="text" id="rem-n" placeholder="Any additional context"></div>
+        <div class="field"><label>Notes</label><input type="text" id="rem-n"></div>
         <button class="btn btn-primary btn-full" onclick="addReminder()">
           <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
           Set reminder
@@ -525,7 +649,7 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
         <div style="margin-bottom:8px;font-size:12px;color:var(--ink2);">Add a new category:</div>
         <div class="pal" id="pal"></div>
         <div style="display:flex;gap:8px;margin-top:10px;align-items:flex-end">
-          <div style="flex:1"><input type="text" id="new-cat-name" placeholder="e.g. Roof, Compound wall, Site security…"></div>
+          <div style="flex:1"><input type="text" id="new-cat-name"></div>
           <button class="btn btn-primary" onclick="addCat()">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add
@@ -538,12 +662,12 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       <div class="section-label">Project details</div>
       <div class="card">
         <div class="grid2">
-          <div class="field"><label>Project name</label><input type="text" id="proj-name" placeholder="Kaka's New House"></div>
-          <div class="field"><label>Owner</label><input type="text" id="proj-owner" placeholder="Rameshbhai Patel"></div>
+          <div class="field"><label>Project name</label><input type="text" id="proj-name"></div>
+          <div class="field"><label>Owner</label><input type="text" id="proj-owner"></div>
         </div>
         <div class="grid2">
-          <div class="field"><label>Total budget (₹)</label><input type="number" id="proj-budget" placeholder="2500000"></div>
-          <div class="field"><label>Site / village</label><input type="text" id="proj-addr" placeholder="Nashik, Maharashtra"></div>
+          <div class="field"><label>Total budget (₹)</label><input type="number" id="proj-budget"></div>
+          <div class="field"><label>Site / village</label><input type="text" id="proj-addr"></div>
         </div>
         <button class="btn btn-primary" onclick="saveProject()">Save project details</button>
       </div>
@@ -564,58 +688,34 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       <!-- Accessibility -->
       <div class="section-label">Accessibility</div>
       <div class="card">
-
-        <!-- Font Size -->
-        <div style="margin-bottom:18px">
-          <div class="toggle-lbl" style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px">Text size</div>
-          <div class="toggle-sub" style="font-size:11px;color:var(--ink3);margin-bottom:0">Increase for easier reading on phone</div>
+        <div style="margin-bottom:4px">
+          <div class="toggle-lbl">Text size</div>
+          <div class="toggle-sub">Applies to all text across the app. Large is default.</div>
           <div class="font-size-row">
-            <button class="fs-btn active" id="fs-small" onclick="setFontSize('small')">
-              A <span class="fs-label">Default</span>
-            </button>
-            <button class="fs-btn" id="fs-medium" onclick="setFontSize('medium')" style="font-size:16px">
-              A <span class="fs-label">Medium</span>
-            </button>
-            <button class="fs-btn" id="fs-large" onclick="setFontSize('large')" style="font-size:19px">
-              A <span class="fs-label">Large</span>
-            </button>
-            <button class="fs-btn" id="fs-xlarge" onclick="setFontSize('xlarge')" style="font-size:22px">
-              A <span class="fs-label">X-Large</span>
-            </button>
+            <button class="fs-btn" id="fs-small" onclick="previewFontSize('small')"><span style="font-size:14px">A</span><span class="fs-label">Small</span></button>
+            <button class="fs-btn" id="fs-medium" onclick="previewFontSize('medium')"><span style="font-size:16px">A</span><span class="fs-label">Medium</span></button>
+            <button class="fs-btn active" id="fs-large" onclick="previewFontSize('large')"><span style="font-size:19px">A</span><span class="fs-label">Large</span></button>
+            <button class="fs-btn" id="fs-xlarge" onclick="previewFontSize('xlarge')"><span style="font-size:22px">A</span><span class="fs-label">X-Large</span></button>
           </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveFontSize()">Save text size</button>
+          <span id="font-save-msg" style="font-size:0.8em;color:var(--green);margin-left:10px;display:none">Saved ✓</span>
         </div>
-
-        <div class="sep" style="margin:0 0 14px"></div>
-
-        <!-- High Contrast -->
+        <div class="sep" style="margin:14px 0"></div>
         <div class="toggle-row">
-          <div>
-            <div class="toggle-lbl">High contrast mode</div>
-            <div class="toggle-sub">Stronger colours, easier on eyes in sunlight</div>
-          </div>
+          <div><div class="toggle-lbl">High contrast</div><div class="toggle-sub">Stronger colours, easier in sunlight</div></div>
           <label class="tog"><input type="checkbox" id="pref-contrast" onchange="savePrefs()"><span class="tog-sl"></span></label>
         </div>
-
         <div class="sep" style="margin:0 0 14px"></div>
-
-        <!-- PIN Lock -->
         <div class="toggle-row" style="border-bottom:none;padding-bottom:0">
-          <div>
-            <div class="toggle-lbl">PIN lock</div>
-            <div class="toggle-sub">Ask for a 4-digit PIN when opening the app</div>
-          </div>
+          <div><div class="toggle-lbl">PIN lock</div><div class="toggle-sub">Protect the app with a 4-digit PIN</div></div>
           <label class="tog"><input type="checkbox" id="pref-pin" onchange="togglePinSetup()"><span class="tog-sl"></span></label>
         </div>
         <div id="pin-setup-area" style="display:none;margin-top:14px">
-          <div class="field" style="margin-bottom:8px">
-            <label>Set a 4-digit PIN</label>
-            <input type="password" id="pin-input-set" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="e.g. 1234" style="letter-spacing:6px;font-size:20px">
-          </div>
+          <div class="field" style="margin-bottom:8px"><label>4-digit PIN</label><input type="password" id="pin-input-set" maxlength="4" inputmode="numeric" style="letter-spacing:6px;font-size:1.4em"></div>
           <button class="btn btn-primary btn-sm" onclick="savePIN()">Save PIN</button>
           <button class="btn btn-ghost btn-sm" onclick="clearPIN()" style="margin-left:8px">Remove PIN</button>
-          <div id="pin-set-msg" style="font-size:12px;color:var(--green);margin-top:6px;display:none">PIN saved ✓</div>
+          <div id="pin-set-msg" style="font-size:0.85em;color:var(--green);margin-top:6px;display:none">PIN saved ✓</div>
         </div>
-
       </div>
 
       <!-- Deploy -->
@@ -658,18 +758,97 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
       </div>
     </section>
 
+
+    <!-- CONTACTS -->
+    <section id="page-contacts" class="page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h2 class="page-title" style="margin:0">Contacts</h2>
+        <button class="btn btn-primary btn-sm" onclick="openAddContact()">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add
+        </button>
+      </div>
+      <input type="text" id="contact-search" oninput="renderContacts()" style="margin-bottom:16px">
+      <div class="section-label" style="margin-top:0">⭐ Favourites</div>
+      <div id="contacts-fav-list"></div>
+      <div class="section-label">All contacts</div>
+      <div id="contacts-all-list"></div>
+    </section>
+
   </main>
 </div>
 
-<!-- PIN LOCK OVERLAY -->
+<!-- MODALS & OVERLAYS -->
+<div class="modal-overlay" id="exp-modal" onclick="closeExpDetail()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="exp-modal-title">Expense Detail</div>
+      <button class="modal-close" onclick="closeExpDetail()">×</button>
+    </div>
+    <div class="modal-body" id="exp-modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="contact-modal" onclick="closeContactDetail()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="contact-modal-title">Contact</div>
+      <button class="modal-close" onclick="closeContactDetail()">×</button>
+    </div>
+    <div class="modal-body" id="contact-modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-contact-modal" onclick="closeAddContact()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="add-contact-title">Add Contact</div>
+      <button class="modal-close" onclick="closeAddContact()">×</button>
+    </div>
+    <div class="modal-body" id="add-contact-body">
+      <div style="text-align:center;margin-bottom:16px">
+        <div class="cdetail-avatar" id="nc-avatar-preview" onclick="document.getElementById('nc-photo-in').click()">+</div>
+        <div style="font-size:0.8em;color:var(--ink3)">Tap to add photo</div>
+        <input type="file" id="nc-photo-in" accept="image/*" style="display:none" onchange="previewContactPhoto(this)">
+      </div>
+      <div class="field"><label>Name *</label><input type="text" id="nc-name"></div>
+      <div class="field"><label>Type</label>
+        <select id="nc-type">
+          <option value="Worker">Worker</option>
+          <option value="Contractor">Contractor</option>
+          <option value="Architect">Architect</option>
+          <option value="Shop">Shop / Supplier</option>
+          <option value="Engineer">Engineer</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Phone</label><input type="tel" id="nc-phone"></div>
+      <div class="field"><label>WhatsApp</label><input type="tel" id="nc-whatsapp"></div>
+      <div class="field"><label>Google Maps link</label><input type="url" id="nc-maps"></div>
+      <div class="field"><label>Notes / Rate card info</label><textarea id="nc-notes"></textarea></div>
+      <div class="field">
+        <label>Photos (visiting card, rate card, etc.)</label>
+        <div class="upload-zone" onclick="document.getElementById('nc-files-in').click()">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p>Tap to add visiting card or rate card photos</p>
+        </div>
+        <input type="file" id="nc-files-in" multiple accept="image/*" style="display:none" onchange="previewContactFiles(this)">
+        <div class="media-grid" id="nc-files-preview"></div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="saveContact()">Save Contact</button>
+    </div>
+  </div>
+</div>
+
 <div class="pin-overlay" id="pin-overlay">
   <div class="pin-title">Ghar Banao</div>
   <div class="pin-sub">Enter your PIN to continue</div>
   <div class="pin-dots">
-    <div class="pin-dot" id="pd0"></div>
-    <div class="pin-dot" id="pd1"></div>
-    <div class="pin-dot" id="pd2"></div>
-    <div class="pin-dot" id="pd3"></div>
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
   </div>
   <div class="pin-pad">
     <button class="pin-key" onclick="pinKey('1')">1</button>
@@ -681,17 +860,17 @@ code{background:var(--paper3);border:1px solid var(--line);border-radius:4px;pad
     <button class="pin-key" onclick="pinKey('7')">7</button>
     <button class="pin-key" onclick="pinKey('8')">8</button>
     <button class="pin-key" onclick="pinKey('9')">9</button>
-    <button class="pin-key" style="font-size:13px;color:var(--ink3)" onclick="pinClear()">⌫</button>
+    <button class="pin-key" style="font-size:0.8em;color:var(--ink3)" onclick="pinClear()">⌫</button>
     <button class="pin-key" onclick="pinKey('0')">0</button>
-    <button class="pin-key" style="font-size:12px;color:var(--ink3)" onclick="pinCancel()">✕</button>
+    <button class="pin-key" style="font-size:0.8em;color:var(--ink3)" onclick="pinCancel()">✕</button>
   </div>
   <div class="pin-error" id="pin-error"></div>
 </div>
 
-<!-- LIGHTBOX -->
+<!-- LIGHTBOX — inline, no new tab, supports images and video -->
 <div class="lightbox" id="lb" onclick="closeLB()">
   <button class="lb-close" onclick="closeLB()">×</button>
-  <img id="lb-img" src="" alt="">
+  <div id="lb-content"></div>
 </div>
 
 <script>
@@ -704,7 +883,7 @@ const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const FOLDER_NAME = 'GharBanao';
 const DB_FILENAME = 'gharbanao_db.json';
 
-let DB = { expenses:[], reminders:[], categories:[], project:{}, prefs:{} };
+let DB = { expenses:[], reminders:[], categories:[], contacts:[], project:{}, prefs:{} };
 let driveToken = null, folderId = null, dbFileId = null, driveEmail = '';
 let pendingFiles = [], pendingAudio = null, pendingTranscript = '';
 let mediaRec = null, audioChunks = [], isRec = false;
@@ -717,6 +896,7 @@ let dbSaveTimer = null;
 window.addEventListener('DOMContentLoaded', async () => {
   loadLocal();
   document.getElementById('new-date').value = today();
+  document.getElementById('new-entry-date').value = today();
   buildPalette();
   populateCatDropdowns();
   applyPrefs();
@@ -733,6 +913,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (!DB.expenses.length && !driveToken) seedSample();
   updateDriveUI();
+  applyFontSize();
   renderDashboard();
   checkPinOnLoad();
 
@@ -750,6 +931,8 @@ function loadLocal() {
   if (!DB.categories) DB.categories = [];
   if (!DB.project) DB.project = {};
   if (!DB.prefs) DB.prefs = {};
+  if (!DB.contacts) DB.contacts = [];
+  if (!DB.contacts) DB.contacts = [];
 }
 
 function saveLocal() {
@@ -774,10 +957,10 @@ function seedSample() {
     {name:'Electrical', color:'#c8810a'},
   ];
   DB.expenses = [
-    {id:'s1',category:'Cement & Sand',amount:22500,vendor:'Sharma Cement House',date:'2025-06-10',description:'50 bags OPC + river sand 2 trolley',tags:['ground floor'],files:[],audio:null,transcript:'Aaj cement ke liye baisi hazaar diye Sharma bhai ko'},
-    {id:'s2',category:'Labour',amount:18000,vendor:'Raju Contractor',date:'2025-06-14',description:'Weekly payment – 6 workers',tags:['weekly'],files:[],audio:null,transcript:''},
-    {id:'s3',category:'Steel',amount:45000,vendor:'Patel Steel Works',date:'2025-06-18',description:'TMT rods 10mm & 12mm – 500 kg',tags:['structural','ground floor'],files:[],audio:null,transcript:''},
-    {id:'s4',category:'Electrical',amount:8200,vendor:'Kumar Electricals',date:'2025-06-22',description:'Conduit pipes & wiring Phase 1',tags:['Phase 1'],files:[],audio:null,transcript:''},
+    {id:'s1',category:'Cement & Sand',amount:22500,vendor:'',date:'2025-06-10',description:'',tags:['ground floor'],files:[],audio:null},
+    {id:'s2',category:'Labour',amount:18000,vendor:'',date:'2025-06-14',description:'',tags:['weekly'],files:[],audio:null},
+    {id:'s3',category:'Steel',amount:45000,vendor:'',date:'2025-06-18',description:'',tags:['structural'],files:[],audio:null},
+    {id:'s4',category:'Electrical',amount:8200,vendor:'',date:'2025-06-22',description:'',tags:[],files:[],audio:null},
   ];
   DB.reminders = [
     {id:'r1',title:'Labour payment – Raju team',date:new Date(Date.now()+3*86400000).toISOString().split('T')[0],amount:18000,notes:'Every Saturday'},
@@ -794,6 +977,7 @@ function updateHeader() {
   const f = fmt(total);
   document.getElementById('sb-total').textContent = f;
   document.getElementById('mob-total').textContent = f;
+  const dt=document.getElementById('mob-total-drawer');if(dt)dt.textContent=f;
   document.getElementById('db-project-name').textContent = DB.project.name || 'My Construction';
   document.getElementById('db-project-sub').textContent = DB.project.owner ? 'Owner: '+DB.project.owner : 'Track every rupee on your build.';
 }
@@ -805,7 +989,7 @@ function showPage(id, el) {
   if (el) el.classList.add('active');
   // Sync both nav bars
   document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));
-  const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings};
+  const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts};
   if(fns[id]) fns[id]();
 }
 
@@ -861,7 +1045,7 @@ function expRow(e, compact) {
   }
   const audio=(!compact&&e.audio)?`<div class="exp-voice-badge">${svgMic()} Voice note</div>`:'';
   const transcript=(!compact&&e.transcript)?`<div class="exp-transcript">"${e.transcript.slice(0,100)}${e.transcript.length>100?'…':''}"</div>`:'';
-  return `<div class="exp-item">
+  return `<div class="exp-item" onclick="openExpDetail('${e.id}')" style="cursor:pointer">
     <div class="exp-cat-dot" style="background:${col}"></div>
     <div class="exp-body">
       <div class="exp-vendor">${e.vendor||e.category}</div>
@@ -873,7 +1057,7 @@ function expRow(e, compact) {
     </div>
     <div class="exp-right">
       <div class="exp-amount">${fmt(e.amount)}</div>
-      <button class="exp-del" onclick="delExp('${e.id}')" title="Delete">
+      <button class="exp-del" onclick="event.stopPropagation();delExp('${e.id}')" title="Delete">
         <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
       </button>
     </div>
@@ -894,7 +1078,16 @@ function renderExpenses() {
   const el=document.getElementById('all-exp-list');
   el.innerHTML=list.length?`<div class="card" style="padding:0 16px">${list.map(e=>expRow(e,!!DB.prefs.compact)).join('')}</div>`:'<div class="empty-state"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No expenses found.</p></div>';
 }
-function delExp(id){if(!confirm('Delete this expense?'))return; DB.expenses=DB.expenses.filter(e=>e.id!==id); saveDB(); renderExpenses(); renderDashboard();}
+async function delExp(id){
+  if(!confirm('Delete this expense?'))return;
+  const exp=DB.expenses.find(e=>e.id===id);
+  if(exp&&driveToken){
+    const fileIds=[...(exp.files||[]).map(f=>f.driveFileId),exp.audioFileId].filter(Boolean);
+    for(const fid of fileIds) await deleteDriveFile(fid);
+  }
+  DB.expenses=DB.expenses.filter(e=>e.id!==id);
+  await saveDB();renderExpenses();renderDashboard();
+}
 
 // ══════════════════════════════════════════════
 // REMINDERS
@@ -963,8 +1156,9 @@ async function toggleRec(){
         const blob=new Blob(audioChunks,{type:'audio/webm'});
         const r=new FileReader();r.onload=ev=>{pendingAudio=ev.target.result;};r.readAsDataURL(blob);
         s.getTracks().forEach(t=>t.stop());
-        document.getElementById('rec-hint').textContent='Recording saved.';
-        document.getElementById('transcript-area').innerHTML=`<div class="field" style="margin-top:12px"><label>Type what you said (Hindi / Marathi / English)</label><textarea placeholder="Aaj cement ke liye ₹22,500 diye Sharma bhai ko, 50 bags OPC…" oninput="pendingTranscript=this.value" style="font-size:13px"></textarea></div>`;
+        document.getElementById('rec-hint').textContent='Voice note recorded. Tap to re-record.';
+        const blobUrl=URL.createObjectURL(new Blob(audioChunks,{type:'audio/webm'}));
+        document.getElementById('transcript-area').innerHTML=`<audio style="width:100%;margin-top:10px;border-radius:8px;accent-color:var(--amber)" controls src="${blobUrl}"></audio>`;
       };
       mediaRec.start();isRec=true;
       document.getElementById('mic-ring').classList.add('recording');
@@ -979,17 +1173,20 @@ async function toggleRec(){
 async function saveExpense(){
   const amt=parseFloat(document.getElementById('new-amt').value);
   const date=document.getElementById('new-date').value;
+  const entryDate=document.getElementById('new-entry-date').value||today();
   if(!amt||amt<=0){alert('Enter a valid amount');return;}
-  if(!date){alert('Select a date');return;}
+  if(!date){alert('Select a date for the expense');return;}
   const cat=document.getElementById('new-cat').value;
   if(!cat){alert('Select a category');return;}
   const tags=(document.getElementById('new-tags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
+  // Get or create date-wise Drive subfolder
+  const dateFolderId=driveToken&&folderId?await ensureDateFolder(date):null;
   let uploadedFiles=[];
   if(pendingFiles.length>0){
-    if(driveToken&&folderId){
+    if(driveToken&&dateFolderId){
       setUpMsg('Uploading '+pendingFiles.length+' file(s) to Google Drive…','info');
       for(const f of pendingFiles){
-        const res=await uploadFileToDrive(f);
+        const res=await uploadFileToDrive(f,dateFolderId);
         uploadedFiles.push(res?{name:f.name,type:f.type,...res}:{name:f.name,type:f.type,data:f.data});
       }
       setUpMsg('Uploaded to Drive ✓','ok');
@@ -998,28 +1195,30 @@ async function saveExpense(){
     }
   }
   let audioFile=null;
-  if(pendingAudio&&driveToken&&folderId){
-    const res=await uploadFileToDrive({name:'voice_'+Date.now()+'.webm',type:'audio/webm',data:pendingAudio});
+  if(pendingAudio&&driveToken&&dateFolderId){
+    const res=await uploadFileToDrive({name:'voice_'+Date.now()+'.webm',type:'audio/webm',data:pendingAudio},dateFolderId);
     audioFile=res||{data:pendingAudio};
   } else if(pendingAudio){audioFile={data:pendingAudio};}
 
   DB.expenses.unshift({
     id:Date.now()+'',category:cat,amount:amt,
-    vendor:document.getElementById('new-vendor').value,date,
+    vendor:document.getElementById('new-vendor').value,
+    date, entryDate,
     description:document.getElementById('new-desc').value,tags,
     files:uploadedFiles,
     audio:audioFile?audioFile.driveViewUrl||audioFile.data:null,
-    transcript:pendingTranscript,
-    driveFolder:folderId?`https://drive.google.com/drive/folders/${folderId}`:null
+    audioFileId:audioFile?audioFile.driveFileId:null,
+    driveFolder:dateFolderId?`https://drive.google.com/drive/folders/${dateFolderId}`:folderId?`https://drive.google.com/drive/folders/${folderId}`:null
   });
   await saveDB();clearForm();
-  showPage('dashboard',document.querySelector('[data-page=dashboard].nav-item, [data-page=dashboard].mnav-btn'));
+  navTo('dashboard');
   setTimeout(()=>{document.getElementById('up-msg').style.display='none';},3000);
 }
 
 function clearForm(){
   ['new-amt','new-vendor','new-desc','new-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('new-date').value=today();
+  document.getElementById('new-entry-date').value=today();
   document.getElementById('new-cat').value='';
   pendingFiles=[];pendingAudio=null;pendingTranscript='';
   document.getElementById('preview-strip').innerHTML='';
@@ -1067,7 +1266,7 @@ function changeCatColor(i){const c=prompt('Enter hex color:',DB.categories[i].co
 function populateCatDropdowns(){const opts=DB.categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');const nc=document.getElementById('new-cat');if(nc)nc.innerHTML='<option value="">Select category…</option>'+opts;const fc=document.getElementById('fcat');if(fc)fc.innerHTML='<option value="">All categories</option>'+opts;}
 function saveProject(){DB.project={name:document.getElementById('proj-name').value,owner:document.getElementById('proj-owner').value,budget:parseFloat(document.getElementById('proj-budget').value)||0,address:document.getElementById('proj-addr').value};saveDB();alert('Project details saved.');}
 function savePrefs(){DB.prefs.lakhs=document.getElementById('pref-lakhs').checked;DB.prefs.compact=document.getElementById('pref-compact').checked;DB.prefs.contrast=document.getElementById('pref-contrast').checked;applyContrast();saveDB();}
-function applyPrefs(){if(DB.prefs){document.getElementById('pref-lakhs').checked=!!DB.prefs.lakhs;document.getElementById('pref-compact').checked=!!DB.prefs.compact;applyContrast();applyFontSize();const pinOn=!!DB.prefs.pinEnabled;document.getElementById('pref-pin').checked=pinOn;document.getElementById('pin-setup-area').style.display=pinOn?'':'none';}}
+function applyPrefs(){if(DB.prefs){document.getElementById('pref-lakhs').checked=!!DB.prefs.lakhs;document.getElementById('pref-compact').checked=!!DB.prefs.compact;applyContrast();applyFontSize();const pinOn=!!DB.prefs.pinEnabled;const pe=document.getElementById('pref-pin');if(pe)pe.checked=pinOn;const pa=document.getElementById('pin-setup-area');if(pa)pa.style.display=pinOn?'':'none';}}
 function updateStorBar(){try{const b=new Blob([localStorage.getItem('gb_db')||'']).size;const mb=(b/1024/1024).toFixed(2);const pct=Math.min(100,b/(5*1024*1024)*100);document.getElementById('stor-bar').style.width=pct+'%';document.getElementById('stor-lbl').textContent=mb+' MB used of ~5 MB browser limit (media files stored in Drive)';document.getElementById('stor-warn').style.display=pct>75?'':'none';}catch(e){}}
 
 function exportData(){const blob=new Blob([JSON.stringify(DB)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='GharBanao_'+today()+'.json';a.click();URL.revokeObjectURL(url);}
@@ -1080,39 +1279,426 @@ async function handleOAuthReturn(){const p=new URLSearchParams(window.location.h
 async function ensureFolder(){if(!driveToken)return;try{const q=encodeURIComponent("name='GharBanao' and mimeType='application/vnd.google-apps.folder' and trashed=false");const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,{headers:{Authorization:'Bearer '+driveToken}});const d=await r.json();if(d.files&&d.files.length){folderId=d.files[0].id;localStorage.setItem('gb_fid',folderId);return;}}catch(e){}try{const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:JSON.stringify({name:'GharBanao',mimeType:'application/vnd.google-apps.folder'})});const d=await r.json();folderId=d.id;localStorage.setItem('gb_fid',folderId);}catch(e){}}
 async function loadDbFromDrive(){if(!driveToken||!folderId)return;try{const q=encodeURIComponent(`name='gharbanao_db.json' and '${folderId}' in parents and trashed=false`);const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+driveToken}});const d=await r.json();if(d.files&&d.files.length){dbFileId=d.files[0].id;localStorage.setItem('gb_dbid',dbFileId);const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${dbFileId}?alt=media`,{headers:{Authorization:'Bearer '+driveToken}});const remoteDB=await r2.json();if(remoteDB.expenses&&remoteDB.expenses.length){DB=remoteDB;}saveLocal();populateCatDropdowns();applyPrefs();renderDashboard();}}catch(e){}}
 async function uploadJson(){if(!driveToken||!folderId)return;const content=JSON.stringify(DB);const blob=new Blob([content],{type:'application/json'});try{if(dbFileId){await fetch(`https://www.googleapis.com/upload/drive/v3/files/${dbFileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:content});}else{const meta={name:'gharbanao_db.json',parents:[folderId]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});const d=await r.json();dbFileId=d.id;localStorage.setItem('gb_dbid',dbFileId);}}catch(e){}}
-async function uploadFileToDrive(file){if(!driveToken||!folderId)return null;try{const arr=file.data.split(',');const mime=arr[0].match(/:(.*?);/)[1];const bstr=atob(arr[1]);let n=bstr.length;const u8=new Uint8Array(n);while(n--)u8[n]=bstr.charCodeAt(n);const blob=new Blob([u8],{type:mime});const meta={name:file.name,parents:[folderId]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,thumbnailLink',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});if(!r.ok){const e=await r.json();if(e.error&&e.error.code===401){driveToken=null;localStorage.removeItem('gb_token');updateDriveUI();}return null;}const d=await r.json();return{driveFileId:d.id,driveViewUrl:d.webViewLink,driveThumbnail:d.thumbnailLink||null};}catch(e){return null;}}
+async function uploadFileToDrive(file,targetFolderId){if(!driveToken)return null;const pid=targetFolderId||folderId;if(!pid)return null;try{const arr=file.data.split(',');const mime=arr[0].match(/:(.*?);/)[1];const bstr=atob(arr[1]);let n=bstr.length;const u8=new Uint8Array(n);while(n--)u8[n]=bstr.charCodeAt(n);const blob=new Blob([u8],{type:mime});const meta={name:file.name,parents:[pid]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,thumbnailLink',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});if(!r.ok){const e=await r.json();if(e.error&&e.error.code===401){driveToken=null;localStorage.removeItem('gb_token');updateDriveUI();}return null;}const d=await r.json();return{driveFileId:d.id,driveViewUrl:d.webViewLink,driveThumbnail:d.thumbnailLink||null};}catch(e){return null;}}
 function disconnectDrive(){if(!confirm('Disconnect Drive? Files already uploaded remain safe.'))return;driveToken=null;folderId=null;dbFileId=null;driveEmail='';['gb_token','gb_fid','gb_dbid','gb_email'].forEach(k=>localStorage.removeItem(k));updateDriveUI();}
-function updateDriveUI(){const on=!!driveToken;document.getElementById('sb-drive-dot').classList.toggle('on',on);document.getElementById('sb-drive-lbl').textContent=on?'Drive connected':'Drive not connected';document.getElementById('sb-drive-info').textContent=on?'Syncing to: '+driveEmail:'Connect in Settings to save photos permanently.';document.getElementById('add-drive-warn').style.display=on?'none':'';document.getElementById('add-drive-ok').style.display=on?'':'none';const setup=document.getElementById('drive-setup');const conn=document.getElementById('drive-connected-card');if(setup)setup.style.display=on?'none':'';if(conn){conn.style.display=on?'':'none';document.getElementById('drive-email-lbl').textContent=driveEmail;const fl=document.getElementById('drive-folder-link');if(fl&&folderId)fl.href=`https://drive.google.com/drive/folders/${folderId}`;}}
+function updateDriveUI(){const on=!!driveToken;['sb-drive-dot','sb-drive-dot2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',on);});['sb-drive-lbl','sb-drive-lbl2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=on?'Drive: '+driveEmail:'Drive not connected';});document.getElementById('sb-drive-info').textContent=on?'Syncing to: '+driveEmail:'Connect in Settings to save photos permanently.';document.getElementById('add-drive-warn').style.display=on?'none':'';document.getElementById('add-drive-ok').style.display=on?'':'none';const setup=document.getElementById('drive-setup');const conn=document.getElementById('drive-connected-card');if(setup)setup.style.display=on?'none':'';if(conn){conn.style.display=on?'':'none';document.getElementById('drive-email-lbl').textContent=driveEmail;const fl=document.getElementById('drive-folder-link');if(fl&&folderId)fl.href=`https://drive.google.com/drive/folders/${folderId}`;}}
 
 // LIGHTBOX
-function openLB(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open');}
-function closeLB(){document.getElementById('lb').classList.remove('open');}
-
-// ══════════════════════════════════════════════
-// FONT SIZE
-// ══════════════════════════════════════════════
-function setFontSize(size){
-  const sizes=['small','medium','large','xlarge'];
-  sizes.forEach(s=>{
-    document.getElementById('fs-'+s).classList.toggle('active',s===size);
+function openLB(src,isVideo){
+  const el=document.getElementById('lb-content');
+  if(isVideo){el.innerHTML=`<video src="${src}" controls autoplay style="max-width:96vw;max-height:92vh;border-radius:8px"></video>`;}
+  else{el.innerHTML=`<img src="${src}" alt="" style="max-width:96vw;max-height:92vh;object-fit:contain;border-radius:8px">`;}
+  document.getElementById('lb').classList.add('open');
+}
+function closeLB(){
+  document.getElementById('lb').classList.remove('open');
+  document.getElementById('lb-content').innerHTML='';
+}
+</script>
+</body>
+</html><script>
+// ══════════════════════════════════════════════════════════════
+// DRAWER / HAMBURGER NAV
+// ══════════════════════════════════════════════════════════════
+function toggleDrawer(){
+  document.getElementById('nav-drawer').classList.toggle('open');
+  document.getElementById('drawer-overlay').classList.toggle('open');
+}
+function closeDrawer(){
+  document.getElementById('nav-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+function navTo(page){
+  closeDrawer();
+  showPage(page, document.querySelector(`.nav-item[data-page="${page}"]`));
+  document.querySelectorAll('.drawer-item').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page===page);
   });
-  if(size==='small'){
-    document.documentElement.removeAttribute('data-font');
-  } else {
-    document.documentElement.setAttribute('data-font',size);
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXPENSE DETAIL MODAL
+// ══════════════════════════════════════════════════════════════
+function openExpDetail(id){
+  const e = DB.expenses.find(x=>x.id===id);
+  if(!e) return;
+  document.getElementById('exp-modal-title').textContent = e.vendor||e.category||'Expense';
+  const catOpts = DB.categories.map(c=>`<option value="${c.name}"${c.name===e.category?' selected':''}>${c.name}</option>`).join('');
+
+  // Build media grid — big previews, play inline
+  let mediaHTML='';
+  const files = e.files||[];
+  if(files.length||e.audio){
+    mediaHTML='<div class="detail-row"><div class="detail-lbl">Media</div><div class="detail-val"><div class="media-grid">';
+    files.forEach((f,i)=>{
+      const isVid = f.type&&f.type.startsWith('video');
+      const src = f.driveViewUrl||f.data||'';
+      if(isVid){
+        mediaHTML+=`<div class="media-thumb" onclick="openLB('${src}',true)">
+          <div style="background:#000;width:100%;height:100%;display:flex;align-items:center;justify-content:center">
+            <div class="play-badge"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          </div>
+          <button class="del-file" onclick="event.stopPropagation();removeExpFile('${id}',${i})">×</button>
+        </div>`;
+      } else {
+        const thumb = f.driveThumbnail||f.data||src;
+        mediaHTML+=`<div class="media-thumb" onclick="openLB('${src}',false)">
+          <img src="${thumb}" alt="${f.name||'file'}" loading="lazy">
+          <button class="del-file" onclick="event.stopPropagation();removeExpFile('${id}',${i})">×</button>
+        </div>`;
+      }
+    });
+    // Add more button
+    mediaHTML+=`<button class="add-media-btn" onclick="document.getElementById('exp-add-file-in').click()">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add
+    </button>
+    <input type="file" id="exp-add-file-in" multiple accept="image/*,video/*,.pdf" style="display:none" onchange="addMoreExpFiles('${id}',this)">`;
+    mediaHTML+='</div>';
+    // Audio
+    if(e.audio){
+      mediaHTML+=`<div style="margin-top:10px"><div style="font-size:0.78em;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Voice note</div>
+        <audio src="${e.audio}" controls style="width:100%;border-radius:8px;accent-color:var(--amber)"></audio></div>`;
+    }
+    mediaHTML+='</div></div>';
   }
+
+  document.getElementById('exp-modal-body').innerHTML = `
+    <div class="detail-row">
+      <div class="detail-lbl">Amount</div>
+      <div class="detail-val"><input type="number" id="ed-amount" value="${e.amount}" min="0" step="1"></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Category</div>
+      <div class="detail-val"><select id="ed-cat">${catOpts}</select></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Vendor</div>
+      <div class="detail-val"><input type="text" id="ed-vendor" value="${e.vendor||''}"></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Date paid</div>
+      <div class="detail-val"><input type="date" id="ed-date" value="${e.date}"></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Entry date</div>
+      <div class="detail-val"><input type="date" id="ed-entry-date" value="${e.entryDate||e.date}"></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Description</div>
+      <div class="detail-val"><textarea id="ed-desc">${e.description||''}</textarea></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-lbl">Tags</div>
+      <div class="detail-val"><input type="text" id="ed-tags" value="${(e.tags||[]).join(', ')}"></div>
+    </div>
+    ${mediaHTML}
+    ${e.driveFolder?`<div class="detail-row"><div class="detail-lbl">Drive</div><div class="detail-val"><a href="${e.driveFolder}" target="_blank" style="color:var(--amber);font-size:0.87em">Open folder ↗</a></div></div>`:''}
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="saveExpDetail('${id}')">Save changes</button>
+      <button class="btn btn-danger btn-sm" onclick="closeExpDetail();delExp('${id}')">Delete</button>
+    </div>
+  `;
+  document.getElementById('exp-modal').classList.add('open');
+}
+
+function closeExpDetail(){
+  document.getElementById('exp-modal').classList.remove('open');
+}
+
+async function saveExpDetail(id){
+  const e = DB.expenses.find(x=>x.id===id);
+  if(!e) return;
+  e.amount = parseFloat(document.getElementById('ed-amount').value)||0;
+  e.category = document.getElementById('ed-cat').value;
+  e.vendor = document.getElementById('ed-vendor').value;
+  e.date = document.getElementById('ed-date').value;
+  e.entryDate = document.getElementById('ed-entry-date').value;
+  e.description = document.getElementById('ed-desc').value;
+  e.tags = document.getElementById('ed-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  await saveDB();
+  closeExpDetail();
+  renderExpenses();
+  renderDashboard();
+}
+
+async function removeExpFile(expId, fileIdx){
+  if(!confirm('Remove this file?')) return;
+  const e = DB.expenses.find(x=>x.id===expId);
+  if(!e) return;
+  const f = e.files[fileIdx];
+  if(f&&f.driveFileId&&driveToken) await deleteDriveFile(f.driveFileId);
+  e.files.splice(fileIdx,1);
+  await saveDB();
+  openExpDetail(expId); // refresh modal
+}
+
+async function addMoreExpFiles(expId, input){
+  const e = DB.expenses.find(x=>x.id===expId);
+  if(!e) return;
+  const files = Array.from(input.files);
+  setUpMsg('Uploading '+files.length+' file(s)…','info');
+  for(const file of files){
+    const reader = new FileReader();
+    const data = await new Promise(res=>{reader.onload=ev=>res(ev.target.result);reader.readAsDataURL(file);});
+    const pf = {name:file.name,type:file.type,data};
+    const dateFolderId = driveToken&&folderId ? await ensureDateFolder(e.date) : null;
+    const res = driveToken ? await uploadFileToDrive(pf, dateFolderId) : null;
+    e.files.push(res ? {name:file.name,type:file.type,...res} : {name:file.name,type:file.type,data});
+  }
+  await saveDB();
+  setUpMsg('Done ✓','ok');
+  setTimeout(()=>{const m=document.getElementById('up-msg');if(m)m.style.display='none';},2500);
+  openExpDetail(expId);
+}
+
+// ══════════════════════════════════════════════════════════════
+// DRIVE: DATE-WISE FOLDERS + DELETE FILE
+// ══════════════════════════════════════════════════════════════
+const _dateFolderCache = {};
+async function ensureDateFolder(dateStr){
+  if(!driveToken||!folderId) return null;
+  if(_dateFolderCache[dateStr]) return _dateFolderCache[dateStr];
+  const name = dateStr; // e.g. "2025-06-22"
+  try{
+    const q=encodeURIComponent(`name='${name}' and '${folderId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,{headers:{Authorization:'Bearer '+driveToken}});
+    const d=await r.json();
+    if(d.files&&d.files.length){_dateFolderCache[dateStr]=d.files[0].id;return d.files[0].id;}
+  }catch(e){}
+  try{
+    const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[folderId]})});
+    const d=await r.json();
+    _dateFolderCache[dateStr]=d.id;
+    return d.id;
+  }catch(e){return null;}
+}
+
+async function deleteDriveFile(fileId){
+  if(!driveToken||!fileId) return;
+  try{
+    await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`,{method:'DELETE',headers:{Authorization:'Bearer '+driveToken}});
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════════
+// CONTACTS
+// ══════════════════════════════════════════════════════════════
+let pendingContactPhoto = null;
+let pendingContactFiles = [];
+let editingContactId = null;
+
+function renderContacts(){
+  const q=(document.getElementById('contact-search')||{value:''}).value.toLowerCase();
+  const all = (DB.contacts||[]).filter(c=>
+    !q || c.name.toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.type||'').toLowerCase().includes(q)
+  );
+  const favs = all.filter(c=>c.favourite);
+  const rest = all.filter(c=>!c.favourite);
+
+  const cardHTML = c => `
+    <div class="contact-card" onclick="openContactDetail('${c.id}')">
+      <div class="contact-avatar">
+        ${c.photo ? `<img src="${c.photo}" alt="${c.name}">` : c.name[0].toUpperCase()}
+      </div>
+      <div class="contact-body">
+        <div class="contact-name">${c.name}</div>
+        <div class="contact-meta">${c.type||''}${c.phone?' · '+c.phone:''}</div>
+      </div>
+      <div class="contact-right" onclick="event.stopPropagation()">
+        <button class="fav-star ${c.favourite?'on':''}" onclick="toggleFav('${c.id}')" title="Favourite">★</button>
+        ${c.phone?`<a class="call-btn" href="tel:${c.phone}">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+          Call
+        </a>`:''}
+      </div>
+    </div>`;
+
+  const favEl = document.getElementById('contacts-fav-list');
+  const allEl = document.getElementById('contacts-all-list');
+  if(favEl) favEl.innerHTML = favs.length ? `<div class="card" style="padding:0 16px">${favs.map(cardHTML).join('')}</div>` : '<div style="font-size:0.87em;color:var(--ink3);padding:4px 0 16px">No favourites yet. Tap ★ on any contact.</div>';
+  if(allEl) allEl.innerHTML = rest.length ? `<div class="card" style="padding:0 16px">${rest.map(cardHTML).join('')}</div>` : (favs.length ? '' : '<div style="font-size:0.87em;color:var(--ink3);padding:12px 0">No contacts yet. Tap Add to get started.</div>');
+}
+
+function toggleFav(id){
+  const c = (DB.contacts||[]).find(x=>x.id===id);
+  if(c){c.favourite=!c.favourite;saveDB();renderContacts();}
+}
+
+function openAddContact(id){
+  editingContactId = id||null;
+  pendingContactPhoto = null;
+  pendingContactFiles = [];
+  const modal = document.getElementById('add-contact-modal');
+  const title = document.getElementById('add-contact-title');
+
+  if(id){
+    const c = DB.contacts.find(x=>x.id===id);
+    if(!c) return;
+    title.textContent = 'Edit Contact';
+    document.getElementById('nc-name').value = c.name||'';
+    document.getElementById('nc-type').value = c.type||'Worker';
+    document.getElementById('nc-phone').value = c.phone||'';
+    document.getElementById('nc-whatsapp').value = c.whatsapp||'';
+    document.getElementById('nc-maps').value = c.maps||'';
+    document.getElementById('nc-notes').value = c.notes||'';
+    const av = document.getElementById('nc-avatar-preview');
+    if(c.photo) av.innerHTML=`<img src="${c.photo}" alt="">`;
+    else av.textContent=c.name[0].toUpperCase();
+    // show existing extra photos
+    const prev = document.getElementById('nc-files-preview');
+    prev.innerHTML = (c.photos||[]).map((p,i)=>`<div class="media-thumb"><img src="${p.data||p}" loading="lazy"><button class="del-file" onclick="event.stopPropagation()">×</button></div>`).join('');
+  } else {
+    title.textContent = 'Add Contact';
+    ['nc-name','nc-phone','nc-whatsapp','nc-maps','nc-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('nc-type').value='Worker';
+    document.getElementById('nc-avatar-preview').textContent='+';
+    document.getElementById('nc-files-preview').innerHTML='';
+  }
+  modal.classList.add('open');
+}
+
+function closeAddContact(){
+  document.getElementById('add-contact-modal').classList.remove('open');
+}
+
+function previewContactPhoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    pendingContactPhoto = ev.target.result;
+    const av = document.getElementById('nc-avatar-preview');
+    av.innerHTML = `<img src="${pendingContactPhoto}" alt="">`;
+  };
+  r.readAsDataURL(file);
+}
+
+function previewContactFiles(input){
+  const files = Array.from(input.files);
+  files.forEach(file=>{
+    const r = new FileReader();
+    r.onload = ev => {
+      pendingContactFiles.push({name:file.name,type:file.type,data:ev.target.result});
+      const prev = document.getElementById('nc-files-preview');
+      const d = document.createElement('div');
+      d.className = 'media-thumb';
+      d.innerHTML = `<img src="${ev.target.result}" loading="lazy">`;
+      prev.appendChild(d);
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+async function saveContact(){
+  const name = document.getElementById('nc-name').value.trim();
+  if(!name){alert('Name is required');return;}
+  const existingId = editingContactId;
+  let contact;
+  if(existingId){
+    contact = DB.contacts.find(x=>x.id===existingId);
+  } else {
+    contact = {id: Date.now()+'', favourite:false, photos:[]};
+    DB.contacts.push(contact);
+  }
+  contact.name = name;
+  contact.type = document.getElementById('nc-type').value;
+  contact.phone = document.getElementById('nc-phone').value.trim();
+  contact.whatsapp = document.getElementById('nc-whatsapp').value.trim();
+  contact.maps = document.getElementById('nc-maps').value.trim();
+  contact.notes = document.getElementById('nc-notes').value.trim();
+  if(pendingContactPhoto) contact.photo = pendingContactPhoto;
+  if(pendingContactFiles.length){
+    if(!contact.photos) contact.photos=[];
+    for(const f of pendingContactFiles){
+      if(driveToken&&folderId){
+        const res = await uploadFileToDrive(f, folderId);
+        contact.photos.push(res||{data:f.data,name:f.name,type:f.type});
+      } else {
+        contact.photos.push({data:f.data,name:f.name,type:f.type});
+      }
+    }
+  }
+  await saveDB();
+  closeAddContact();
+  renderContacts();
+}
+
+async function deleteContact(id){
+  if(!confirm('Delete this contact?')) return;
+  const c = DB.contacts.find(x=>x.id===id);
+  if(c&&driveToken){
+    const ids = (c.photos||[]).map(p=>p.driveFileId).filter(Boolean);
+    for(const fid of ids) await deleteDriveFile(fid);
+  }
+  DB.contacts = DB.contacts.filter(x=>x.id!==id);
+  await saveDB();
+  closeContactDetail();
+  renderContacts();
+}
+
+function openContactDetail(id){
+  const c = DB.contacts.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('contact-modal-title').textContent = c.name;
+
+  const photosHTML = (c.photos||[]).length ? `
+    <div class="detail-row">
+      <div class="detail-lbl">Photos</div>
+      <div class="detail-val">
+        <div class="cdetail-photos">
+          ${(c.photos||[]).map(p=>`<div class="cdetail-photo" onclick="openLB('${p.data||p}',false)"><img src="${p.data||p}" loading="lazy"></div>`).join('')}
+        </div>
+      </div>
+    </div>` : '';
+
+  document.getElementById('contact-modal-body').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="cdetail-avatar">
+        ${c.photo?`<img src="${c.photo}" alt="${c.name}">`:(c.name[0]||'?').toUpperCase()}
+      </div>
+      <div style="font-size:0.8em;color:var(--ink3)">${c.type||''}</div>
+    </div>
+    ${c.phone?`<div class="detail-row"><div class="detail-lbl">Phone</div><div class="detail-val"><a href="tel:${c.phone}" class="call-btn" style="display:inline-flex"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>Call ${c.phone}</a></div></div>`:''}
+    ${c.whatsapp?`<div class="detail-row"><div class="detail-lbl">WhatsApp</div><div class="detail-val"><a href="https://wa.me/${c.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--amber)">Open WhatsApp ↗</a></div></div>`:''}
+    ${c.maps?`<div class="detail-row"><div class="detail-lbl">Location</div><div class="detail-val"><a href="${c.maps}" target="_blank" style="color:var(--amber)">Open in Maps ↗</a></div></div>`:''}
+    ${c.notes?`<div class="detail-row"><div class="detail-lbl">Notes</div><div class="detail-val" style="white-space:pre-wrap;font-size:0.9em">${c.notes}</div></div>`:''}
+    ${photosHTML}
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="closeContactDetail();openAddContact('${id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteContact('${id}')">Delete</button>
+    </div>
+  `;
+  document.getElementById('contact-modal').classList.add('open');
+}
+
+function closeContactDetail(){
+  document.getElementById('contact-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// FONT SIZE + CONTRAST + PIN (settings features)
+// ══════════════════════════════════════════════════════════════
+function setFontSize(size){previewFontSize(size);}
+function previewFontSize(size){
+  const sizes=['small','medium','large','xlarge'];
+  sizes.forEach(s=>document.getElementById('fs-'+s).classList.toggle('active',s===size));
+  document.documentElement.setAttribute('data-font', size==='large'?'large':size);
+}
+function saveFontSize(){
+  const active=document.querySelector('.fs-btn.active');
+  const size=active?active.id.replace('fs-',''):'large';
+  document.documentElement.setAttribute('data-font', size);
   DB.prefs.fontSize=size;
   saveLocal();
+  const msg=document.getElementById('font-save-msg');
+  if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);}
 }
-
 function applyFontSize(){
-  const size=DB.prefs.fontSize||'small';
-  setFontSize(size);
+  const size=DB.prefs.fontSize||'large';
+  document.documentElement.setAttribute('data-font',size);
+  const sizes=['small','medium','large','xlarge'];
+  sizes.forEach(s=>{const el=document.getElementById('fs-'+s);if(el)el.classList.toggle('active',s===size);});
 }
-
-// ══════════════════════════════════════════════
-// HIGH CONTRAST
-// ══════════════════════════════════════════════
 function applyContrast(){
   const on=!!DB.prefs.contrast;
   document.documentElement.setAttribute('data-contrast',on?'high':'normal');
@@ -1120,94 +1706,15 @@ function applyContrast(){
   if(el) el.checked=on;
 }
 
-// ══════════════════════════════════════════════
-// PIN LOCK
-// ══════════════════════════════════════════════
+// ── PIN ──────────────────────────────────────────────────────
 let pinBuffer='';
-let pinMode='unlock'; // 'unlock' or 'verify'
-let pinResolve=null;
-
-function checkPinOnLoad(){
-  const savedPin=localStorage.getItem('gb_pin');
-  if(savedPin){
-    showPinOverlay();
-  }
-}
-
-function showPinOverlay(){
-  pinBuffer='';
-  pinMode='unlock';
-  updatePinDots();
-  document.getElementById('pin-error').textContent='';
-  document.getElementById('pin-overlay').classList.add('show');
-}
-
-function pinKey(digit){
-  if(pinBuffer.length>=4) return;
-  pinBuffer+=digit;
-  updatePinDots();
-  if(pinBuffer.length===4){
-    setTimeout(()=>{
-      const saved=localStorage.getItem('gb_pin');
-      if(pinBuffer===saved){
-        document.getElementById('pin-overlay').classList.remove('show');
-        pinBuffer='';
-        updatePinDots();
-      } else {
-        document.getElementById('pin-error').textContent='Wrong PIN. Try again.';
-        pinBuffer='';
-        updatePinDots();
-      }
-    },200);
-  }
-}
-
-function pinClear(){
-  if(pinBuffer.length>0) pinBuffer=pinBuffer.slice(0,-1);
-  updatePinDots();
-}
-
-function pinCancel(){
-  // Only allow cancel if no PIN is actually set (safety)
-  const saved=localStorage.getItem('gb_pin');
-  if(!saved){
-    document.getElementById('pin-overlay').classList.remove('show');
-  }
-}
-
-function updatePinDots(){
-  for(let i=0;i<4;i++){
-    document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length);
-  }
-}
-
-function togglePinSetup(){
-  const on=document.getElementById('pref-pin').checked;
-  const area=document.getElementById('pin-setup-area');
-  area.style.display=on?'':'none';
-  if(!on) clearPIN();
-}
-
-function savePIN(){
-  const val=document.getElementById('pin-input-set').value.trim();
-  if(!/^\d{4}$/.test(val)){alert('PIN must be exactly 4 digits');return;}
-  localStorage.setItem('gb_pin',val);
-  DB.prefs.pinEnabled=true;
-  saveLocal();
-  document.getElementById('pin-input-set').value='';
-  const msg=document.getElementById('pin-set-msg');
-  msg.style.display='block';
-  setTimeout(()=>msg.style.display='none',2500);
-}
-
-function clearPIN(){
-  localStorage.removeItem('gb_pin');
-  DB.prefs.pinEnabled=false;
-  saveLocal();
-  document.getElementById('pref-pin').checked=false;
-  document.getElementById('pin-setup-area').style.display='none';
-}
-
+function checkPinOnLoad(){if(localStorage.getItem('gb_pin'))showPinOverlay();}
+function showPinOverlay(){pinBuffer='';updatePinDots();document.getElementById('pin-error').textContent='';document.getElementById('pin-overlay').classList.add('show');}
+function pinKey(d){if(pinBuffer.length>=4)return;pinBuffer+=d;updatePinDots();if(pinBuffer.length===4){setTimeout(()=>{const s=localStorage.getItem('gb_pin');if(pinBuffer===s){document.getElementById('pin-overlay').classList.remove('show');pinBuffer='';}else{document.getElementById('pin-error').textContent='Wrong PIN. Try again.';pinBuffer='';}updatePinDots();},200);}}
+function pinClear(){if(pinBuffer.length)pinBuffer=pinBuffer.slice(0,-1);updatePinDots();}
+function pinCancel(){if(!localStorage.getItem('gb_pin'))document.getElementById('pin-overlay').classList.remove('show');}
+function updatePinDots(){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el)el.classList.toggle('filled',i<pinBuffer.length);}}
+function togglePinSetup(){const on=document.getElementById('pref-pin').checked;document.getElementById('pin-setup-area').style.display=on?'':'none';if(!on)clearPIN();}
+function savePIN(){const v=document.getElementById('pin-input-set').value.trim();if(!/^\d{4}$/.test(v)){alert('PIN must be exactly 4 digits');return;}localStorage.setItem('gb_pin',v);DB.prefs.pinEnabled=true;saveLocal();document.getElementById('pin-input-set').value='';const m=document.getElementById('pin-set-msg');if(m){m.style.display='block';setTimeout(()=>m.style.display='none',2500);}}
+function clearPIN(){localStorage.removeItem('gb_pin');DB.prefs.pinEnabled=false;saveLocal();const el=document.getElementById('pref-pin');if(el)el.checked=false;const a=document.getElementById('pin-setup-area');if(a)a.style.display='none';}
 </script>
-</body>
-</html>
