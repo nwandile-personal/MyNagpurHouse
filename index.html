@@ -346,6 +346,22 @@ html[data-contrast='high']{--ink:#000;--ink2:#1a1a1a;--ink3:#444;--paper:#fff;--
 .call-btn svg{width:14px;height:14px;}
 .contact-type-badge{display:inline-block;font-size:0.72em;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:4px;background:var(--paper3);color:var(--ink2);font-weight:600;}
 
+/* ─── NOTES ─── */
+.note-card{padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+.note-card:last-child{border-bottom:none;}
+.note-card.priority{background:linear-gradient(to right, var(--amber-bg) 0%, transparent 6%);}
+.note-card-top{display:flex;align-items:center;gap:10px;}
+.note-star{background:none;border:none;cursor:pointer;font-size:1.15em;line-height:1;color:var(--line2);transition:color .15s;flex-shrink:0;padding:2px;}
+.note-star.on{color:#f59e0b;}
+.note-card-title{flex:1;font-size:0.97em;font-weight:500;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.note-check{background:none;border:1.5px solid var(--line2);border-radius:50%;width:24px;height:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:transparent;transition:all .15s;}
+.note-check svg{width:13px;height:13px;}
+.note-check.on{background:var(--green);border-color:var(--green);color:#fff;}
+.note-card-text{font-size:0.84em;color:var(--ink2);margin-top:5px;line-height:1.5;}
+.note-card-meta{display:flex;align-items:center;gap:10px;font-size:0.72em;color:var(--ink3);margin-top:6px;}
+.note-card-meta span{display:flex;align-items:center;gap:4px;}
+.note-card-meta svg{width:11px;height:11px;}
+
 /* ─── CONTACT DETAIL MODAL ─── */
 .cdetail-avatar{width:80px;height:80px;border-radius:50%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-size:2em;font-weight:600;color:var(--amber-text);overflow:hidden;margin:0 auto 12px;cursor:pointer;}
 .cdetail-avatar img{width:100%;height:100%;object-fit:cover;}
@@ -521,6 +537,10 @@ code               { font-size: 0.68em; }
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Contacts
     </button>
+    <button class="nav-item" onclick="showPage('notes',this)" data-page="notes">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+      Notes
+    </button>
     <button class="nav-item" onclick="showPage('analytics',this)" data-page="analytics">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Analytics
@@ -577,6 +597,10 @@ code               { font-size: 0.68em; }
     <button class="drawer-item" onclick="navTo('contacts')" data-page="contacts">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Contacts
+    </button>
+    <button class="drawer-item" onclick="navTo('notes')" data-page="notes">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+      Notes
     </button>
     <button class="drawer-item" onclick="navTo('reminders')" data-page="reminders">
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
@@ -903,6 +927,25 @@ code               { font-size: 0.68em; }
       <div id="contacts-all-list"></div>
     </section>
 
+    <!-- NOTES -->
+    <section id="page-notes" class="page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap">
+        <h2 class="page-title" style="margin:0">Notes</h2>
+        <button class="btn btn-primary btn-sm" onclick="openAddNote()">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Note
+        </button>
+      </div>
+      <div id="notes-active-list"></div>
+      <div id="notes-completed-section" style="margin-top:18px;display:none">
+        <button class="section-label" id="notes-completed-toggle" onclick="toggleCompletedNotes()" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:0">
+          <svg id="notes-completed-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:11px;height:11px;transition:transform .15s"><polyline points="9 18 15 12 9 6"/></svg>
+          <span id="notes-completed-count">Completed notes</span>
+        </button>
+        <div id="notes-completed-list" style="display:none;margin-top:8px"></div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -972,6 +1015,45 @@ code               { font-size: 0.68em; }
   </div>
 </div>
 
+<div class="modal-overlay" id="add-note-modal" onclick="closeAddNote()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="add-note-title">Add Note</div>
+      <button class="modal-close" onclick="closeAddNote()">×</button>
+    </div>
+    <div class="modal-body" id="add-note-body">
+      <div class="field"><label>Title *</label><input type="text" id="nt-title"></div>
+      <div class="field"><label>Note</label><textarea id="nt-text" style="min-height:110px"></textarea></div>
+      <div class="toggle-row" style="border-bottom:none;padding-bottom:6px">
+        <div><div class="toggle-lbl">Priority note</div><div class="toggle-sub">Pin with ★ to the top of the list</div></div>
+        <label class="tog"><input type="checkbox" id="nt-priority"><span class="tog-sl"></span></label>
+      </div>
+      <div class="field">
+        <label>Photos &amp; videos</label>
+        <div class="upload-zone" onclick="document.getElementById('nt-files-in').click()">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p>Tap to add reference photos or videos</p>
+        </div>
+        <input type="file" id="nt-files-in" multiple accept="image/*,video/*" style="display:none" onchange="previewNoteFiles(this)">
+        <div class="media-grid" id="nt-files-preview"></div>
+      </div>
+      <button class="btn btn-primary btn-full" id="save-note-btn" style="margin-top:8px" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="note-detail-modal" onclick="closeNoteDetail()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="note-detail-title">Note</div>
+      <button class="modal-close" onclick="closeNoteDetail()">×</button>
+    </div>
+    <div class="modal-body" id="note-detail-body"></div>
+  </div>
+</div>
+
 <div class="pin-overlay" id="pin-overlay">
   <div class="pin-title">Ghar Banao</div>
   <div class="pin-sub">Enter your PIN to continue</div>
@@ -1012,7 +1094,7 @@ const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const FOLDER_NAME = 'GharBanao';
 const DB_FILENAME = 'gharbanao_db.json';
 
-let DB = { expenses:[], reminders:[], categories:[], contacts:[], project:{}, prefs:{} };
+let DB = { expenses:[], reminders:[], categories:[], contacts:[], notes:[], project:{}, prefs:{} };
 let driveToken = null, folderId = null, dbFileId = null, driveEmail = '';
 let pendingFiles = [], pendingAudio = null, pendingTranscript = '';
 let mediaRec = null, audioChunks = [], isRec = false;
@@ -1077,7 +1159,7 @@ function loadLocal() {
   if (!DB.project) DB.project = {};
   if (!DB.prefs) DB.prefs = {};
   if (!DB.contacts) DB.contacts = [];
-  if (!DB.contacts) DB.contacts = [];
+  if (!DB.notes) DB.notes = [];
 }
 
 function saveLocal() {
@@ -1161,7 +1243,7 @@ function showPage(id, el) {
   if (el) el.classList.add('active');
   // Sync both nav bars
   document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));
-  const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts};
+  const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts,notes:renderNotes};
   if(fns[id]) fns[id]();
   if(id==='add' && typeof populateVendorSuggestions==='function') populateVendorSuggestions();
 }
@@ -1579,6 +1661,7 @@ function importData(e){
       if(!DB.project) DB.project={};
       if(!DB.prefs) DB.prefs={};
       if(!DB.contacts) DB.contacts=[];
+      if(!DB.notes) DB.notes=[];
       const ok = await saveDB();
       populateCatDropdowns();
       populateVendorSuggestions();
@@ -1595,7 +1678,7 @@ function importData(e){
 function clearAll(){
   if(!confirm('Delete all data? This removes it from Drive too. Cannot be undone.'))return;
   if(!confirm('Are you absolutely sure?'))return;
-  DB={expenses:[],reminders:[],categories:[],contacts:[],project:{},prefs:{}};
+  DB={expenses:[],reminders:[],categories:[],contacts:[],notes:[],project:{},prefs:{}};
   saveDB().then(ok=>{
     populateCatDropdowns();
     populateVendorSuggestions();
@@ -1629,6 +1712,7 @@ async function loadDbFromDrive(){
         if(!DB.project) DB.project={};
         if(!DB.prefs) DB.prefs={};
         if(!DB.contacts) DB.contacts=[];
+        if(!DB.notes) DB.notes=[];
       }
       populateCatDropdowns();
       applyPrefs();
@@ -1639,7 +1723,7 @@ async function loadDbFromDrive(){
       const activePage = document.querySelector('.page.active');
       if(activePage){
         const id = activePage.id.replace('page-','');
-        const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts};
+        const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts,notes:renderNotes};
         if(fns[id]) fns[id]();
       }
       return true;
@@ -1919,6 +2003,27 @@ async function deleteDriveFile(fileId){
   }catch(e){}
 }
 
+// ── Notes get their own dedicated subfolder (GharBanao/Notes) rather than
+//    the date-wise folders used for expenses, since reference photos and
+//    videos attached to a note aren't tied to a particular spend date.
+let _notesFolderId = null;
+async function ensureNotesFolder(){
+  if(!driveToken||!folderId) return null;
+  if(_notesFolderId) return _notesFolderId;
+  try{
+    const q=encodeURIComponent(`name='Notes' and '${folderId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,{headers:{Authorization:'Bearer '+driveToken}});
+    const d=await r.json();
+    if(d.files&&d.files.length){_notesFolderId=d.files[0].id;return d.files[0].id;}
+  }catch(e){}
+  try{
+    const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:JSON.stringify({name:'Notes',mimeType:'application/vnd.google-apps.folder',parents:[folderId]})});
+    const d=await r.json();
+    _notesFolderId=d.id;
+    return d.id;
+  }catch(e){return null;}
+}
+
 // ══════════════════════════════════════════════════════════════
 // CONTACTS
 // ══════════════════════════════════════════════════════════════
@@ -2128,6 +2233,303 @@ function openContactDetail(id){
 
 function closeContactDetail(){
   document.getElementById('contact-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// NOTES — reference notes with priority pinning and complete/undo,
+// media stored in a dedicated GharBanao/Notes Drive subfolder.
+// ══════════════════════════════════════════════════════════════
+let pendingNoteFiles = [];
+let editingNoteId = null;
+let completedNotesExpanded = false;
+
+function renderNotes(){
+  const notes = DB.notes || [];
+  const active = notes.filter(n=>!n.completed);
+  const completed = notes.filter(n=>n.completed);
+
+  // Priority notes (★) float to the top, then sort by newest first
+  // within each group — this is the "priority pin" behaviour requested.
+  active.sort((a,b)=>{
+    if(!!b.priority - !!a.priority !== 0) return (b.priority?1:0)-(a.priority?1:0);
+    return (b.createdAt||0)-(a.createdAt||0);
+  });
+  completed.sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+
+  const card = n => `
+    <div class="note-card${n.priority?' priority':''}" onclick="openNoteDetail('${n.id}')">
+      <div class="note-card-top">
+        <button class="note-star ${n.priority?'on':''}" onclick="event.stopPropagation();toggleNotePriority('${n.id}')" title="Priority">★</button>
+        <div class="note-card-title">${escapeHtml(n.title)}</div>
+        <button class="note-check ${n.completed?'on':''}" onclick="event.stopPropagation();toggleNoteComplete('${n.id}')" title="${n.completed?'Mark as not complete':'Mark as complete'}">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
+      ${n.text?`<div class="note-card-text">${escapeHtml(n.text).slice(0,140)}${n.text.length>140?'…':''}</div>`:''}
+      <div class="note-card-meta">
+        ${(n.files||[]).length?`<span>${svgFile()} ${n.files.length}</span>`:''}
+        <span>${formatNoteDate(n.createdAt)}</span>
+      </div>
+    </div>`;
+
+  const activeEl = document.getElementById('notes-active-list');
+  if(activeEl){
+    activeEl.innerHTML = active.length
+      ? `<div class="card" style="padding:0 16px">${active.map(card).join('')}</div>`
+      : '<div style="font-size:0.87em;color:var(--ink3);padding:12px 0">No notes yet. Tap Add Note to jot something down for later.</div>';
+  }
+
+  const compSection = document.getElementById('notes-completed-section');
+  const compCount = document.getElementById('notes-completed-count');
+  const compList = document.getElementById('notes-completed-list');
+  if(compSection){
+    compSection.style.display = completed.length ? '' : 'none';
+    if(compCount) compCount.textContent = `Completed notes (${completed.length})`;
+    if(compList) compList.innerHTML = completed.length
+      ? `<div class="card" style="padding:0 16px">${completed.map(card).join('')}</div>`
+      : '';
+  }
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s||'';
+  return d.innerHTML;
+}
+
+function formatNoteDate(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+}
+
+function toggleCompletedNotes(){
+  completedNotesExpanded = !completedNotesExpanded;
+  const list = document.getElementById('notes-completed-list');
+  const arrow = document.getElementById('notes-completed-arrow');
+  if(list) list.style.display = completedNotesExpanded ? '' : 'none';
+  if(arrow) arrow.style.transform = completedNotesExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+}
+
+async function toggleNotePriority(id){
+  const n = (DB.notes||[]).find(x=>x.id===id);
+  if(!n) return;
+  n.priority = !n.priority;
+  await saveDB();
+  renderNotes();
+}
+
+async function toggleNoteComplete(id){
+  const n = (DB.notes||[]).find(x=>x.id===id);
+  if(!n) return;
+  n.completed = !n.completed;
+  n.completedAt = n.completed ? Date.now() : null;
+  await saveDB();
+  renderNotes();
+  toast(n.completed ? 'Marked as complete' : 'Marked as not complete', 'success');
+}
+
+function openAddNote(id){
+  editingNoteId = id||null;
+  pendingNoteFiles = [];
+  const modal = document.getElementById('add-note-modal');
+  const title = document.getElementById('add-note-title');
+  if(id){
+    const n = DB.notes.find(x=>x.id===id);
+    if(!n) return;
+    title.textContent = 'Edit Note';
+    document.getElementById('nt-title').value = n.title||'';
+    document.getElementById('nt-text').value = n.text||'';
+    document.getElementById('nt-priority').checked = !!n.priority;
+    const prev = document.getElementById('nt-files-preview');
+    prev.innerHTML = (n.files||[]).map(f=>{
+      const isVid = f.type&&f.type.startsWith('video');
+      const src = f.data||'';
+      return isVid
+        ? `<div class="media-thumb" style="background:#000;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`
+        : `<div class="media-thumb"><img src="${src}" loading="lazy"></div>`;
+    }).join('');
+  } else {
+    title.textContent = 'Add Note';
+    document.getElementById('nt-title').value = '';
+    document.getElementById('nt-text').value = '';
+    document.getElementById('nt-priority').checked = false;
+    document.getElementById('nt-files-preview').innerHTML = '';
+  }
+  modal.classList.add('open');
+}
+
+function closeAddNote(){
+  document.getElementById('add-note-modal').classList.remove('open');
+}
+
+function previewNoteFiles(input){
+  const files = Array.from(input.files);
+  files.forEach(file=>{
+    const r = new FileReader();
+    r.onload = ev => {
+      pendingNoteFiles.push({name:file.name,type:file.type,data:ev.target.result});
+      const prev = document.getElementById('nt-files-preview');
+      const d = document.createElement('div');
+      d.className = 'media-thumb';
+      const isVid = file.type.startsWith('video');
+      d.innerHTML = isVid
+        ? `<div style="background:#000;width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`
+        : `<img src="${ev.target.result}" loading="lazy">`;
+      prev.appendChild(d);
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+async function saveNote(){
+  const title = document.getElementById('nt-title').value.trim();
+  if(!title){ toast('Title is required','error'); return; }
+  const btn = document.getElementById('save-note-btn');
+  setBtnLoading(btn,true,'Saving…');
+  try{
+    const existingId = editingNoteId;
+    let note;
+    if(existingId){
+      note = DB.notes.find(x=>x.id===existingId);
+    } else {
+      note = { id: Date.now()+'-'+Math.random().toString(36).slice(2,7), files:[], createdAt: Date.now(), completed:false, completedAt:null };
+      DB.notes.push(note);
+    }
+    note.title = title;
+    note.text = document.getElementById('nt-text').value.trim();
+    note.priority = document.getElementById('nt-priority').checked;
+
+    if(pendingNoteFiles.length){
+      if(!note.files) note.files = [];
+      const notesFolderId = driveToken ? await ensureNotesFolder() : null;
+      for(const f of pendingNoteFiles){
+        if(driveToken&&notesFolderId){
+          const res = await uploadFileToDrive(f, notesFolderId);
+          // Always keep the local base64 copy too — Drive's thumbnail/view
+          // links need an Authorization header a plain <img>/<video> tag
+          // can't send, so previews always render from the local copy.
+          note.files.push(res ? {name:f.name,type:f.type,data:f.data,...res} : {name:f.name,type:f.type,data:f.data});
+        } else {
+          note.files.push({name:f.name,type:f.type,data:f.data});
+        }
+      }
+    }
+
+    const ok = await saveDB();
+    setBtnLoading(btn,false);
+    toast(ok ? (existingId?'Note updated':'Note added') : 'Saved locally — could not reach Drive', ok?'success':'error');
+    closeAddNote();
+    renderNotes();
+  }catch(err){
+    setBtnLoading(btn,false);
+    toast('Could not save — please try again','error');
+  }
+}
+
+function openNoteDetail(id){
+  const n = DB.notes.find(x=>x.id===id);
+  if(!n) return;
+  document.getElementById('note-detail-title').textContent = n.title;
+
+  let mediaHTML = '';
+  if((n.files||[]).length){
+    mediaHTML = '<div class="detail-row"><div class="detail-lbl">Media</div><div class="detail-val"><div class="media-grid">';
+    n.files.forEach((f,i)=>{
+      const isVid = f.type&&f.type.startsWith('video');
+      const src = f.data||'';
+      if(isVid){
+        mediaHTML += `<div class="media-thumb" onclick="openLB('${src}',true)">
+          ${src?`<video src="${src}" muted style="width:100%;height:100%;object-fit:cover"></video>`:`<div style="background:#000;width:100%;height:100%"></div>`}
+          <div class="play-badge"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          <button class="del-file" onclick="event.stopPropagation();removeNoteFile('${id}',${i})">×</button>
+        </div>`;
+      } else if(src){
+        mediaHTML += `<div class="media-thumb" onclick="openLB('${src}',false)">
+          <img src="${src}" alt="${f.name||'file'}" loading="lazy">
+          <button class="del-file" onclick="event.stopPropagation();removeNoteFile('${id}',${i})">×</button>
+        </div>`;
+      }
+    });
+    mediaHTML += `<button class="add-media-btn" onclick="document.getElementById('note-add-file-in').click()">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add
+    </button>
+    <input type="file" id="note-add-file-in" multiple accept="image/*,video/*" style="display:none" onchange="addMoreNoteFiles('${id}',this)">`;
+    mediaHTML += '</div></div></div>';
+  } else {
+    mediaHTML = `<div class="detail-row"><div class="detail-lbl">Media</div><div class="detail-val">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('note-add-file-in').click()">Add photo / video</button>
+      <input type="file" id="note-add-file-in" multiple accept="image/*,video/*" style="display:none" onchange="addMoreNoteFiles('${id}',this)">
+    </div></div>`;
+  }
+
+  document.getElementById('note-detail-body').innerHTML = `
+    ${n.text?`<div class="detail-row"><div class="detail-lbl">Note</div><div class="detail-val" style="white-space:pre-wrap;font-size:0.9em">${escapeHtml(n.text)}</div></div>`:''}
+    <div class="detail-row"><div class="detail-lbl">Added</div><div class="detail-val" style="font-size:0.87em">${formatNoteDate(n.createdAt)}</div></div>
+    ${mediaHTML}
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="toggleNotePriority('${id}');openNoteDetail('${id}')">${n.priority?'★ Remove priority':'☆ Make priority'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleNoteComplete('${id}');closeNoteDetail()">${n.completed?'Mark as not complete':'Mark as complete'}</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="closeNoteDetail();openAddNote('${id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteNote('${id}')">Delete</button>
+    </div>
+  `;
+  document.getElementById('note-detail-modal').classList.add('open');
+}
+
+function closeNoteDetail(){
+  document.getElementById('note-detail-modal').classList.remove('open');
+}
+
+async function removeNoteFile(noteId, fileIdx){
+  if(!confirm('Remove this file?')) return;
+  const n = DB.notes.find(x=>x.id===noteId);
+  if(!n) return;
+  const f = n.files[fileIdx];
+  if(f&&f.driveFileId&&driveToken) await deleteDriveFile(f.driveFileId);
+  n.files.splice(fileIdx,1);
+  await saveDB();
+  openNoteDetail(noteId);
+}
+
+async function addMoreNoteFiles(noteId, input){
+  const n = DB.notes.find(x=>x.id===noteId);
+  if(!n) return;
+  const files = Array.from(input.files);
+  setUpMsg('Uploading '+files.length+' file(s)…','info');
+  const notesFolderId = driveToken ? await ensureNotesFolder() : null;
+  for(const file of files){
+    const reader = new FileReader();
+    const data = await new Promise(res=>{reader.onload=ev=>res(ev.target.result);reader.readAsDataURL(file);});
+    const pf = {name:file.name,type:file.type,data};
+    const res = driveToken&&notesFolderId ? await uploadFileToDrive(pf, notesFolderId) : null;
+    if(!n.files) n.files = [];
+    n.files.push(res ? {name:file.name,type:file.type,data,...res} : {name:file.name,type:file.type,data});
+  }
+  await saveDB();
+  setUpMsg('Done ✓','ok');
+  setTimeout(()=>{const m=document.getElementById('up-msg');if(m)m.style.display='none';},2500);
+  openNoteDetail(noteId);
+}
+
+async function deleteNote(id){
+  if(!confirm('Delete this note?')) return;
+  try{
+    const n = DB.notes.find(x=>x.id===id);
+    if(n&&driveToken){
+      const ids = (n.files||[]).map(f=>f.driveFileId).filter(Boolean);
+      for(const fid of ids) await deleteDriveFile(fid);
+    }
+    DB.notes = DB.notes.filter(x=>x.id!==id);
+    await saveDB();
+    closeNoteDetail();
+    renderNotes();
+    toast('Note deleted','success');
+  }catch(err){
+    toast('Could not delete — please try again','error');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
