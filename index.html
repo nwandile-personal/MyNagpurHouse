@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>My Nagpur House</title>
+<title>Ghar Banao</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -137,7 +137,8 @@ input[type=text],input[type=number],input[type=date],input[type=email],select,te
 }
 input:focus,select:focus,textarea:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(200,129,10,.12);}
 textarea{resize:vertical;min-height:80px;line-height:1.6;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid2{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:520px){.grid2{grid-template-columns:1fr 1fr;}}
 
 /* ─── BUTTONS ─── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;transition:opacity .15s,transform .1s;letter-spacing:.01em;}
@@ -469,15 +470,31 @@ code               { font-size: 0.68em; }
 /* Font size picker labels */
 .fs-btn .fs-label  { font-size: 0.58em; }
 
+
+/* ─── LOADING BUTTON STATE ─── */
+.btn[disabled]{opacity:0.7;cursor:not-allowed;pointer-events:none;}
+.btn .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle;}
+.btn-ghost .spinner,.btn-danger .spinner{border:2px solid rgba(0,0,0,.2);border-top-color:var(--ink);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── TOAST NOTIFICATIONS ─── */
+.toast-stack{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:100%;padding:0 16px;}
+.toast{background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:30px;font-size:0.85em;font-weight:500;box-shadow:0 6px 24px rgba(0,0,0,.22);display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(-12px);transition:opacity .22s,transform .22s;max-width:92vw;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#1d8a4a;}
+.toast.error{background:#c0392b;}
+.toast svg{width:16px;height:16px;flex-shrink:0;}
+
 </style>
 </head>
 <body>
+<div class="toast-stack" id="toast-stack"></div>
 <div class="shell">
 
   <!-- SIDEBAR (desktop) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <h1>My Nagpur House</h1>
+      <h1>Ghar Banao</h1>
       <p>Construction tracker</p>
     </div>
     <div class="sidebar-total">
@@ -527,7 +544,7 @@ code               { font-size: 0.68em; }
     <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <h1>My Nagpur House</h1>
+    <h1>Ghar Banao</h1>
     <span class="htotal" id="mob-total">₹0</span>
   </div>
   <!-- DRAWER OVERLAY -->
@@ -536,7 +553,7 @@ code               { font-size: 0.68em; }
   <nav class="drawer" id="nav-drawer">
     <div class="drawer-top">
       <div class="drawer-logo">
-        <div style="font-family:'DM Serif Display',serif;font-size:1.3em">My Nagpur House</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3em">Ghar Banao</div>
         <div style="font-size:0.72em;color:var(--ink3);margin-top:2px">Construction tracker</div>
       </div>
       <button onclick="closeDrawer()" class="drawer-close">×</button>
@@ -613,7 +630,11 @@ code               { font-size: 0.68em; }
         <div class="field"><label>Amount (₹)</label><input type="number" id="new-amt" min="0" step="1"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Vendor / Supplier</label><input type="text" id="new-vendor"></div>
+        <div class="field">
+          <label>Vendor / Supplier <span style="font-size:0.75em;font-weight:400;color:var(--ink3)">pick or type new</span></label>
+          <input type="text" id="new-vendor" list="vendor-suggestions" autocomplete="off">
+          <datalist id="vendor-suggestions"></datalist>
+        </div>
         <div class="field"><label>Date of Expense <span style="font-size:0.75em;font-weight:400;color:var(--ink3)">when paid</span></label><input type="date" id="new-date"></div>
       </div>
       <div class="field">
@@ -625,7 +646,7 @@ code               { font-size: 0.68em; }
 
       <div class="section-label">Receipts &amp; photos</div>
       <div id="add-drive-warn" class="info-strip warn" style="display:none"><strong>Drive not connected.</strong> Files saved in browser only. Connect Drive in Settings.</div>
-      <div id="add-drive-ok" class="info-strip success" style="display:none">Drive connected — files upload directly to your MyNagpurHouse folder.</div>
+      <div id="add-drive-ok" class="info-strip success" style="display:none">Drive connected — files upload directly to your GharBanao folder.</div>
       <div class="upload-zone" onclick="document.getElementById('file-in').click()">
         <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <p>Tap to add photos, receipts, or videos</p>
@@ -647,7 +668,7 @@ code               { font-size: 0.68em; }
       </div>
 
       <div style="display:flex;gap:10px;margin-top:4px;padding-bottom:20px;">
-        <button class="btn btn-primary" style="flex:1" onclick="saveExpense()">
+        <button class="btn btn-primary" id="save-exp-btn" style="flex:1" onclick="saveExpense()">
           <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save expense
         </button>
@@ -763,7 +784,7 @@ code               { font-size: 0.68em; }
           <div class="field"><label>Total budget (₹)</label><input type="number" id="proj-budget"></div>
           <div class="field"><label>Site / village</label><input type="text" id="proj-addr"></div>
         </div>
-        <button class="btn btn-primary" onclick="saveProject()">Save project details</button>
+        <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">Save project details</button>
       </div>
 
       <!-- Prefs -->
@@ -855,13 +876,20 @@ code               { font-size: 0.68em; }
 
     <!-- CONTACTS -->
     <section id="page-contacts" class="page">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap">
         <h2 class="page-title" style="margin:0">Contacts</h2>
-        <button class="btn btn-primary btn-sm" onclick="openAddContact()">
-          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add
-        </button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" id="import-phone-btn" onclick="importFromPhone()" style="display:none">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            From Phone
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openAddContact()">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add
+          </button>
+        </div>
       </div>
+      <div id="import-phone-unsupported" class="info-strip" style="display:none;margin-bottom:14px;font-size:0.8em">Importing from your phone's contacts isn't supported in this browser. Use Chrome on Android, or add contacts manually.</div>
       <input type="text" id="contact-search" oninput="renderContacts()" style="margin-bottom:16px">
       <div class="section-label" style="margin-top:0">⭐ Favourites</div>
       <div id="contacts-fav-list"></div>
@@ -871,6 +899,7 @@ code               { font-size: 0.68em; }
 
   </main>
 </div>
+
 
 <!-- MODALS & OVERLAYS -->
 <div class="modal-overlay" id="exp-modal" onclick="closeExpDetail()">
@@ -932,7 +961,7 @@ code               { font-size: 0.68em; }
         <input type="file" id="nc-files-in" multiple accept="image/*" style="display:none" onchange="previewContactFiles(this)">
         <div class="media-grid" id="nc-files-preview"></div>
       </div>
-      <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="saveContact()">Save Contact</button>
+      <button class="btn btn-primary btn-full" id="save-contact-btn" style="margin-top:8px" onclick="saveContact()">Save Contact</button>
     </div>
   </div>
 </div>
@@ -1010,6 +1039,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   applyFontSize();
   renderDashboard();
   checkPinOnLoad();
+  populateVendorSuggestions();
+  initContactImportUI();
 
   document.getElementById('file-in').addEventListener('change', onFileSelect);
   document.getElementById('imp-in').addEventListener('change', importData);
@@ -1085,6 +1116,7 @@ function showPage(id, el) {
   document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));
   const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts};
   if(fns[id]) fns[id]();
+  if(id==='add' && typeof populateVendorSuggestions==='function') populateVendorSuggestions();
 }
 
 function fmt(n) {
@@ -1132,8 +1164,14 @@ function expRow(e, compact) {
   let filesHTML='';
   if(!compact&&(e.files||[]).length){
     filesHTML='<div class="exp-files">'+e.files.map(f=>{
-      if(f.driveViewUrl) return `<a class="exp-thumb" href="${f.driveViewUrl}" target="_blank" title="${f.name}">${f.driveThumbnail?`<img src="${f.driveThumbnail}" alt="">`:svgFile()}</a>`;
-      if(f.data&&f.type&&f.type.startsWith('image')) return `<div class="exp-thumb" onclick="openLB('${f.data}')"  title="${f.name}"><img src="${f.data}" alt=""></div>`;
+      const isImg=f.type&&f.type.startsWith('image');
+      const isVid=f.type&&f.type.startsWith('video');
+      // Always prefer local base64 data for the visible thumbnail — it
+      // renders instantly with no auth issues. Drive link (if any) is used
+      // only as a "view full size" action via the lightbox.
+      if(isImg&&f.data) return `<div class="exp-thumb" onclick="event.stopPropagation();openLB('${f.data}',false)" title="${f.name}"><img src="${f.data}" alt="" loading="lazy"></div>`;
+      if(isVid&&f.data) return `<div class="exp-thumb" onclick="event.stopPropagation();openLB('${f.data}',true)" title="${f.name}" style="background:#000;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`;
+      if(f.driveViewUrl) return `<a class="exp-thumb" href="${f.driveViewUrl}" target="_blank" title="${f.name}" onclick="event.stopPropagation()">${svgFile()}</a>`;
       return `<div class="exp-thumb" title="${f.name}">${svgFile()}</div>`;
     }).join('')+'</div>';
   }
@@ -1174,13 +1212,18 @@ function renderExpenses() {
 }
 async function delExp(id){
   if(!confirm('Delete this expense?'))return;
-  const exp=DB.expenses.find(e=>e.id===id);
-  if(exp&&driveToken){
-    const fileIds=[...(exp.files||[]).map(f=>f.driveFileId),exp.audioFileId].filter(Boolean);
-    for(const fid of fileIds) await deleteDriveFile(fid);
+  try{
+    const exp=DB.expenses.find(e=>e.id===id);
+    if(exp&&driveToken){
+      const fileIds=[...(exp.files||[]).map(f=>f.driveFileId),exp.audioFileId].filter(Boolean);
+      for(const fid of fileIds) await deleteDriveFile(fid);
+    }
+    DB.expenses=DB.expenses.filter(e=>e.id!==id);
+    await saveDB();renderExpenses();renderDashboard();
+    toast('Expense deleted','success');
+  }catch(err){
+    toast('Could not delete — please try again','error');
   }
-  DB.expenses=DB.expenses.filter(e=>e.id!==id);
-  await saveDB();renderExpenses();renderDashboard();
 }
 
 // ══════════════════════════════════════════════
@@ -1240,25 +1283,72 @@ function setUpMsg(msg,type){const el=document.getElementById('up-msg');el.classN
 // ══════════════════════════════════════════════
 // VOICE RECORDING
 // ══════════════════════════════════════════════
+function pickAudioMime(){
+  const candidates=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus',''];
+  for(const m of candidates){
+    if(m===''||((window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m)))) return m;
+  }
+  return '';
+}
 async function toggleRec(){
   if(!isRec){
+    // Feature checks first, with clear messages — this is where most
+    // "it just shows an error" reports come from.
+    if(!window.isSecureContext){
+      document.getElementById('rec-hint').textContent='Voice recording needs HTTPS. This page is not secure.';
+      return;
+    }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      document.getElementById('rec-hint').textContent='This browser does not support voice recording.';
+      return;
+    }
+    document.getElementById('rec-hint').textContent='Requesting microphone access…';
     try{
       const s=await navigator.mediaDevices.getUserMedia({audio:true});
-      mediaRec=new MediaRecorder(s);audioChunks=[];
-      mediaRec.ondataavailable=e=>audioChunks.push(e.data);
-      mediaRec.onstop=()=>{
-        const blob=new Blob(audioChunks,{type:'audio/webm'});
-        const r=new FileReader();r.onload=ev=>{pendingAudio=ev.target.result;};r.readAsDataURL(blob);
+      const mime=pickAudioMime();
+      mediaRec= mime ? new MediaRecorder(s,{mimeType:mime}) : new MediaRecorder(s);
+      audioChunks=[];
+      mediaRec.ondataavailable=e=>{ if(e.data&&e.data.size>0) audioChunks.push(e.data); };
+      mediaRec.onerror=(ev)=>{
+        document.getElementById('rec-hint').textContent='Recording error: '+(ev.error?ev.error.name:'unknown');
         s.getTracks().forEach(t=>t.stop());
-        document.getElementById('rec-hint').textContent='Voice note recorded. Tap to re-record.';
-        const blobUrl=URL.createObjectURL(new Blob(audioChunks,{type:'audio/webm'}));
+        isRec=false;
+        document.getElementById('mic-ring').classList.remove('recording');
+      };
+      mediaRec.onstop=()=>{
+        s.getTracks().forEach(t=>t.stop());
+        if(!audioChunks.length){
+          document.getElementById('rec-hint').textContent='No audio captured. Tap to try again.';
+          return;
+        }
+        const outType=mediaRec.mimeType||mime||'audio/webm';
+        const blob=new Blob(audioChunks,{type:outType});
+        const r=new FileReader();
+        r.onload=ev=>{ pendingAudio=ev.target.result; };
+        r.readAsDataURL(blob);
+        const blobUrl=URL.createObjectURL(blob);
+        document.getElementById('rec-hint').textContent='Voice note recorded. Tap mic to re-record.';
         document.getElementById('transcript-area').innerHTML=`<audio style="width:100%;margin-top:10px;border-radius:8px;accent-color:var(--amber)" controls src="${blobUrl}"></audio>`;
       };
-      mediaRec.start();isRec=true;
+      mediaRec.start();
+      isRec=true;
       document.getElementById('mic-ring').classList.add('recording');
       document.getElementById('rec-hint').textContent='Recording… tap to stop';
-    }catch(e){document.getElementById('rec-hint').textContent='Microphone access denied.';}
-  }else{mediaRec.stop();isRec=false;document.getElementById('mic-ring').classList.remove('recording');}
+    }catch(e){
+      // Surface the ACTUAL browser error reason instead of a generic message
+      let msg='Could not start recording.';
+      if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError') msg='Microphone permission denied. Check your browser/site settings and allow microphone access.';
+      else if(e.name==='NotFoundError'||e.name==='DevicesNotFoundError') msg='No microphone found on this device.';
+      else if(e.name==='NotReadableError'||e.name==='TrackStartError') msg='Microphone is being used by another app. Close it and try again.';
+      else if(e.name==='SecurityError') msg='Microphone blocked — this page must be opened over HTTPS.';
+      else msg='Microphone error: '+(e.name||e.message||'unknown');
+      document.getElementById('rec-hint').textContent=msg;
+    }
+  }else{
+    mediaRec.stop();
+    isRec=false;
+    document.getElementById('mic-ring').classList.remove('recording');
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1268,45 +1358,67 @@ async function saveExpense(){
   const amt=parseFloat(document.getElementById('new-amt').value);
   const date=document.getElementById('new-date').value;
   const entryDate=document.getElementById('new-entry-date').value||today();
-  if(!amt||amt<=0){alert('Enter a valid amount');return;}
-  if(!date){alert('Select a date for the expense');return;}
+  if(!amt||amt<=0){toast('Enter a valid amount','error');return;}
+  if(!date){toast('Select a date for the expense','error');return;}
   const cat=document.getElementById('new-cat').value;
-  if(!cat){alert('Select a category');return;}
-  const tags=(document.getElementById('new-tags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
-  // Get or create date-wise Drive subfolder
-  const dateFolderId=driveToken&&folderId?await ensureDateFolder(date):null;
-  let uploadedFiles=[];
-  if(pendingFiles.length>0){
-    if(driveToken&&dateFolderId){
-      setUpMsg('Uploading '+pendingFiles.length+' file(s) to Google Drive…','info');
-      for(const f of pendingFiles){
-        const res=await uploadFileToDrive(f,dateFolderId);
-        uploadedFiles.push(res?{name:f.name,type:f.type,...res}:{name:f.name,type:f.type,data:f.data});
-      }
-      setUpMsg('Uploaded to Drive ✓','ok');
-    }else{
-      uploadedFiles=pendingFiles.map(f=>({name:f.name,type:f.type,data:f.data}));
-    }
-  }
-  let audioFile=null;
-  if(pendingAudio&&driveToken&&dateFolderId){
-    const res=await uploadFileToDrive({name:'voice_'+Date.now()+'.webm',type:'audio/webm',data:pendingAudio},dateFolderId);
-    audioFile=res||{data:pendingAudio};
-  } else if(pendingAudio){audioFile={data:pendingAudio};}
+  if(!cat){toast('Select a category','error');return;}
 
-  DB.expenses.unshift({
-    id:Date.now()+'',category:cat,amount:amt,
-    vendor:document.getElementById('new-vendor').value,
-    date, entryDate,
-    description:document.getElementById('new-desc').value,tags,
-    files:uploadedFiles,
-    audio:audioFile?audioFile.driveViewUrl||audioFile.data:null,
-    audioFileId:audioFile?audioFile.driveFileId:null,
-    driveFolder:dateFolderId?`https://drive.google.com/drive/folders/${dateFolderId}`:folderId?`https://drive.google.com/drive/folders/${folderId}`:null
-  });
-  await saveDB();clearForm();
-  navTo('dashboard');
-  setTimeout(()=>{document.getElementById('up-msg').style.display='none';},3000);
+  const btn=document.getElementById('save-exp-btn');
+  setBtnLoading(btn,true,'Saving…');
+  try{
+    const tags=(document.getElementById('new-tags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
+    // Get or create date-wise Drive subfolder
+    const dateFolderId=driveToken&&folderId?await ensureDateFolder(date):null;
+    let uploadedFiles=[];
+    if(pendingFiles.length>0){
+      if(driveToken&&dateFolderId){
+        setUpMsg('Uploading '+pendingFiles.length+' file(s) to Google Drive…','info');
+        for(const f of pendingFiles){
+          const res=await uploadFileToDrive(f,dateFolderId);
+          // Always keep the local base64 data too — Drive thumbnailLink needs
+          // an Authorization header that a plain <img> tag can't send, so we
+          // use the local copy for instant, reliable previews.
+          uploadedFiles.push(res?{name:f.name,type:f.type,data:f.data,...res}:{name:f.name,type:f.type,data:f.data});
+        }
+        setUpMsg('Uploaded to Drive ✓','ok');
+      }else{
+        uploadedFiles=pendingFiles.map(f=>({name:f.name,type:f.type,data:f.data}));
+      }
+    }
+    let audioFile=null;
+    if(pendingAudio&&driveToken&&dateFolderId){
+      const res=await uploadFileToDrive({name:'voice_'+Date.now()+'.webm',type:'audio/webm',data:pendingAudio},dateFolderId);
+      // Keep the local base64 for instant playback too — Drive's webViewLink
+      // can't be played directly inside an <audio> tag without auth.
+      audioFile=res?{data:pendingAudio,...res}:{data:pendingAudio};
+    } else if(pendingAudio){audioFile={data:pendingAudio};}
+
+    const vendorName = document.getElementById('new-vendor').value.trim();
+    DB.expenses.unshift({
+      id:Date.now()+'',category:cat,amount:amt,
+      vendor:vendorName,
+      date, entryDate,
+      description:document.getElementById('new-desc').value,tags,
+      files:uploadedFiles,
+      audio:audioFile?audioFile.data:null,
+      audioFileId:audioFile?audioFile.driveFileId:null,
+      driveFolder:dateFolderId?`https://drive.google.com/drive/folders/${dateFolderId}`:folderId?`https://drive.google.com/drive/folders/${folderId}`:null
+    });
+
+    // If this vendor isn't already a saved contact, offer to keep them
+    // in sync for next time (silent — just adds to suggestions list,
+    // does not create a full contact record automatically).
+
+    await saveDB();
+    clearForm();
+    setBtnLoading(btn,false);
+    toast('Expense saved','success');
+    navTo('dashboard');
+    setTimeout(()=>{const m=document.getElementById('up-msg');if(m)m.style.display='none';},3000);
+  }catch(err){
+    setBtnLoading(btn,false);
+    toast('Could not save — please try again','error');
+  }
 }
 
 function clearForm(){
@@ -1354,11 +1466,23 @@ function buildPalette(){
   document.getElementById('pal').innerHTML=PALETTE.map(c=>`<div class="pal-dot${c===selColor?' sel':''}" style="background:${c}" onclick="pickColor('${c}')"></div>`).join('');
 }
 function pickColor(c){selColor=c;document.getElementById('new-cat-color-preview').style.background=c;document.getElementById('new-cat-color-name').textContent=c;buildPalette();}
-function addCat(){const n=document.getElementById('new-cat-name').value.trim();if(!n){alert('Enter a name');return;}if(DB.categories.find(c=>c.name.toLowerCase()===n.toLowerCase())){alert('Already exists');return;}DB.categories.push({name:n,color:selColor});document.getElementById('new-cat-name').value='';saveDB();populateCatDropdowns();renderCatList();}
+function addCat(){const n=document.getElementById('new-cat-name').value.trim();if(!n){toast('Enter a category name','error');return;}if(DB.categories.find(c=>c.name.toLowerCase()===n.toLowerCase())){toast('Category already exists','error');return;}DB.categories.push({name:n,color:selColor});document.getElementById('new-cat-name').value='';saveDB();populateCatDropdowns();renderCatList();toast('Category added','success');}
 function delCat(i){if(!confirm(`Delete "${DB.categories[i].name}"?`))return;DB.categories.splice(i,1);saveDB();populateCatDropdowns();renderCatList();}
 function changeCatColor(i){const c=prompt('Enter hex color:',DB.categories[i].color);if(c&&/^#[0-9A-Fa-f]{6}$/.test(c)){DB.categories[i].color=c;saveDB();renderCatList();}}
 function populateCatDropdowns(){const opts=DB.categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');const nc=document.getElementById('new-cat');if(nc)nc.innerHTML='<option value="">Select category…</option>'+opts;const fc=document.getElementById('fcat');if(fc)fc.innerHTML='<option value="">All categories</option>'+opts;}
-function saveProject(){DB.project={name:document.getElementById('proj-name').value,owner:document.getElementById('proj-owner').value,budget:parseFloat(document.getElementById('proj-budget').value)||0,address:document.getElementById('proj-addr').value};saveDB();alert('Project details saved.');}
+async function saveProject(){
+  const btn=document.getElementById('save-project-btn');
+  setBtnLoading(btn,true,'Saving…');
+  try{
+    DB.project={name:document.getElementById('proj-name').value,owner:document.getElementById('proj-owner').value,budget:parseFloat(document.getElementById('proj-budget').value)||0,address:document.getElementById('proj-addr').value};
+    await saveDB();
+    setBtnLoading(btn,false);
+    toast('Project details saved','success');
+  }catch(err){
+    setBtnLoading(btn,false);
+    toast('Could not save — please try again','error');
+  }
+}
 function savePrefs(){DB.prefs.lakhs=document.getElementById('pref-lakhs').checked;DB.prefs.compact=document.getElementById('pref-compact').checked;DB.prefs.contrast=document.getElementById('pref-contrast').checked;applyContrast();saveDB();}
 function applyPrefs(){if(DB.prefs){document.getElementById('pref-lakhs').checked=!!DB.prefs.lakhs;document.getElementById('pref-compact').checked=!!DB.prefs.compact;applyContrast();applyFontSize();const pinOn=!!DB.prefs.pinEnabled;const pe=document.getElementById('pref-pin');if(pe)pe.checked=pinOn;const pa=document.getElementById('pin-setup-area');if(pa)pa.style.display=pinOn?'':'none';}}
 function updateStorBar(){try{const b=new Blob([localStorage.getItem('gb_db')||'']).size;const mb=(b/1024/1024).toFixed(2);const pct=Math.min(100,b/(5*1024*1024)*100);document.getElementById('stor-bar').style.width=pct+'%';document.getElementById('stor-lbl').textContent=mb+' MB used of ~5 MB browser limit (media files stored in Drive)';document.getElementById('stor-warn').style.display=pct>75?'':'none';}catch(e){}}
@@ -1426,20 +1550,29 @@ function openExpDetail(id){
     mediaHTML='<div class="detail-row"><div class="detail-lbl">Media</div><div class="detail-val"><div class="media-grid">';
     files.forEach((f,i)=>{
       const isVid = f.type&&f.type.startsWith('video');
-      const src = f.driveViewUrl||f.data||'';
+      // Drive's thumbnailLink/webViewLink need an Authorization header that
+      // a plain <img>/<video> tag can't send — always use the local base64
+      // copy for previews so they actually render.
+      const localSrc = f.data||'';
       if(isVid){
-        mediaHTML+=`<div class="media-thumb" onclick="openLB('${src}',true)">
-          <div style="background:#000;width:100%;height:100%;display:flex;align-items:center;justify-content:center">
-            <div class="play-badge"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-          </div>
+        mediaHTML+=`<div class="media-thumb" onclick="openLB('${localSrc}',true)">
+          ${localSrc?`<video src="${localSrc}" muted style="width:100%;height:100%;object-fit:cover"></video>`:`<div style="background:#000;width:100%;height:100%"></div>`}
+          <div class="play-badge"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          <button class="del-file" onclick="event.stopPropagation();removeExpFile('${id}',${i})">×</button>
+        </div>`;
+      } else if(localSrc){
+        mediaHTML+=`<div class="media-thumb" onclick="openLB('${localSrc}',false)">
+          <img src="${localSrc}" alt="${f.name||'file'}" loading="lazy">
           <button class="del-file" onclick="event.stopPropagation();removeExpFile('${id}',${i})">×</button>
         </div>`;
       } else {
-        const thumb = f.driveThumbnail||f.data||src;
-        mediaHTML+=`<div class="media-thumb" onclick="openLB('${src}',false)">
-          <img src="${thumb}" alt="${f.name||'file'}" loading="lazy">
+        // No local copy (e.g. legacy/Drive-only record) — fall back to a
+        // file icon that opens the Drive link in a new tab instead of a
+        // broken image.
+        mediaHTML+=`<a class="media-thumb" href="${f.driveViewUrl||'#'}" target="_blank" style="display:flex;align-items:center;justify-content:center;background:var(--paper3)" onclick="event.stopPropagation()">
+          ${svgFile()}
           <button class="del-file" onclick="event.stopPropagation();removeExpFile('${id}',${i})">×</button>
-        </div>`;
+        </a>`;
       }
     });
     // Add more button
@@ -1467,7 +1600,7 @@ function openExpDetail(id){
     </div>
     <div class="detail-row">
       <div class="detail-lbl">Vendor</div>
-      <div class="detail-val"><input type="text" id="ed-vendor" value="${e.vendor||''}"></div>
+      <div class="detail-val"><input type="text" id="ed-vendor" list="vendor-suggestions" autocomplete="off" value="${e.vendor||''}"></div>
     </div>
     <div class="detail-row">
       <div class="detail-lbl">Date paid</div>
@@ -1488,7 +1621,7 @@ function openExpDetail(id){
     ${mediaHTML}
     ${e.driveFolder?`<div class="detail-row"><div class="detail-lbl">Drive</div><div class="detail-val"><a href="${e.driveFolder}" target="_blank" style="color:var(--amber);font-size:0.87em">Open folder ↗</a></div></div>`:''}
     <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-      <button class="btn btn-primary" style="flex:1" onclick="saveExpDetail('${id}')">Save changes</button>
+      <button class="btn btn-primary" id="save-exp-detail-btn" style="flex:1" onclick="saveExpDetail('${id}')">Save changes</button>
       <button class="btn btn-danger btn-sm" onclick="closeExpDetail();delExp('${id}')">Delete</button>
     </div>
   `;
@@ -1502,17 +1635,26 @@ function closeExpDetail(){
 async function saveExpDetail(id){
   const e = DB.expenses.find(x=>x.id===id);
   if(!e) return;
-  e.amount = parseFloat(document.getElementById('ed-amount').value)||0;
-  e.category = document.getElementById('ed-cat').value;
-  e.vendor = document.getElementById('ed-vendor').value;
-  e.date = document.getElementById('ed-date').value;
-  e.entryDate = document.getElementById('ed-entry-date').value;
-  e.description = document.getElementById('ed-desc').value;
-  e.tags = document.getElementById('ed-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  await saveDB();
-  closeExpDetail();
-  renderExpenses();
-  renderDashboard();
+  const btn=document.getElementById('save-exp-detail-btn');
+  setBtnLoading(btn,true,'Saving…');
+  try{
+    e.amount = parseFloat(document.getElementById('ed-amount').value)||0;
+    e.category = document.getElementById('ed-cat').value;
+    e.vendor = document.getElementById('ed-vendor').value.trim();
+    e.date = document.getElementById('ed-date').value;
+    e.entryDate = document.getElementById('ed-entry-date').value;
+    e.description = document.getElementById('ed-desc').value;
+    e.tags = document.getElementById('ed-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+    await saveDB();
+    setBtnLoading(btn,false);
+    toast('Changes saved','success');
+    closeExpDetail();
+    renderExpenses();
+    renderDashboard();
+  }catch(err){
+    setBtnLoading(btn,false);
+    toast('Could not save — please try again','error');
+  }
 }
 
 async function removeExpFile(expId, fileIdx){
@@ -1537,7 +1679,7 @@ async function addMoreExpFiles(expId, input){
     const pf = {name:file.name,type:file.type,data};
     const dateFolderId = driveToken&&folderId ? await ensureDateFolder(e.date) : null;
     const res = driveToken ? await uploadFileToDrive(pf, dateFolderId) : null;
-    e.files.push(res ? {name:file.name,type:file.type,...res} : {name:file.name,type:file.type,data});
+    e.files.push(res ? {name:file.name,type:file.type,data,...res} : {name:file.name,type:file.type,data});
   }
   await saveDB();
   setUpMsg('Done ✓','ok');
@@ -1685,40 +1827,51 @@ function previewContactFiles(input){
 
 async function saveContact(){
   const name = document.getElementById('nc-name').value.trim();
-  if(!name){alert('Name is required');return;}
-  const existingId = editingContactId;
-  let contact;
-  if(existingId){
-    contact = DB.contacts.find(x=>x.id===existingId);
-  } else {
-    contact = {id: Date.now()+'', favourite:false, photos:[]};
-    DB.contacts.push(contact);
-  }
-  contact.name = name;
-  contact.type = document.getElementById('nc-type').value;
-  contact.phone = document.getElementById('nc-phone').value.trim();
-  contact.whatsapp = document.getElementById('nc-whatsapp').value.trim();
-  contact.maps = document.getElementById('nc-maps').value.trim();
-  contact.notes = document.getElementById('nc-notes').value.trim();
-  if(pendingContactPhoto) contact.photo = pendingContactPhoto;
-  if(pendingContactFiles.length){
-    if(!contact.photos) contact.photos=[];
-    for(const f of pendingContactFiles){
-      if(driveToken&&folderId){
-        const res = await uploadFileToDrive(f, folderId);
-        contact.photos.push(res||{data:f.data,name:f.name,type:f.type});
-      } else {
-        contact.photos.push({data:f.data,name:f.name,type:f.type});
+  if(!name){toast('Name is required','error');return;}
+  const btn=document.getElementById('save-contact-btn');
+  setBtnLoading(btn,true,'Saving…');
+  try{
+    const existingId = editingContactId;
+    let contact;
+    if(existingId){
+      contact = DB.contacts.find(x=>x.id===existingId);
+    } else {
+      contact = {id: Date.now()+'', favourite:false, photos:[]};
+      DB.contacts.push(contact);
+    }
+    contact.name = name;
+    contact.type = document.getElementById('nc-type').value;
+    contact.phone = document.getElementById('nc-phone').value.trim();
+    contact.whatsapp = document.getElementById('nc-whatsapp').value.trim();
+    contact.maps = document.getElementById('nc-maps').value.trim();
+    contact.notes = document.getElementById('nc-notes').value.trim();
+    if(pendingContactPhoto) contact.photo = pendingContactPhoto;
+    if(pendingContactFiles.length){
+      if(!contact.photos) contact.photos=[];
+      for(const f of pendingContactFiles){
+        if(driveToken&&folderId){
+          const res = await uploadFileToDrive(f, folderId);
+          contact.photos.push(res?{data:f.data,name:f.name,type:f.type,...res}:{data:f.data,name:f.name,type:f.type});
+        } else {
+          contact.photos.push({data:f.data,name:f.name,type:f.type});
+        }
       }
     }
+    await saveDB();
+    populateVendorSuggestions();
+    setBtnLoading(btn,false);
+    toast(existingId?'Contact updated':'Contact added','success');
+    closeAddContact();
+    renderContacts();
+  }catch(err){
+    setBtnLoading(btn,false);
+    toast('Could not save — please try again','error');
   }
-  await saveDB();
-  closeAddContact();
-  renderContacts();
 }
 
 async function deleteContact(id){
   if(!confirm('Delete this contact?')) return;
+  try{
   const c = DB.contacts.find(x=>x.id===id);
   if(c&&driveToken){
     const ids = (c.photos||[]).map(p=>p.driveFileId).filter(Boolean);
@@ -1726,8 +1879,13 @@ async function deleteContact(id){
   }
   DB.contacts = DB.contacts.filter(x=>x.id!==id);
   await saveDB();
+  populateVendorSuggestions();
+  toast('Contact deleted','success');
   closeContactDetail();
   renderContacts();
+  }catch(err){
+    toast('Could not delete — please try again','error');
+  }
 }
 
 function openContactDetail(id){
@@ -1811,4 +1969,112 @@ function updatePinDots(){for(let i=0;i<4;i++){const el=document.getElementById('
 function togglePinSetup(){const on=document.getElementById('pref-pin').checked;document.getElementById('pin-setup-area').style.display=on?'':'none';if(!on)clearPIN();}
 function savePIN(){const v=document.getElementById('pin-input-set').value.trim();if(!/^\d{4}$/.test(v)){alert('PIN must be exactly 4 digits');return;}localStorage.setItem('gb_pin',v);DB.prefs.pinEnabled=true;saveLocal();document.getElementById('pin-input-set').value='';const m=document.getElementById('pin-set-msg');if(m){m.style.display='block';setTimeout(()=>m.style.display='none',2500);}}
 function clearPIN(){localStorage.removeItem('gb_pin');DB.prefs.pinEnabled=false;saveLocal();const el=document.getElementById('pref-pin');if(el)el.checked=false;const a=document.getElementById('pin-setup-area');if(a)a.style.display='none';}
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// TOAST NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════
+function toast(msg, type){
+  type = type || 'default';
+  const stack = document.getElementById('toast-stack');
+  if(!stack) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  let icon = '';
+  if(type==='success') icon = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+  else if(type==='error') icon = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+  el.innerHTML = icon + '<span>' + msg + '</span>';
+  stack.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{
+    el.classList.remove('show');
+    setTimeout(()=>el.remove(), 250);
+  }, 2200);
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOADING BUTTON STATE — generic helper used by every save/delete
+// action so the person always sees something is happening.
+// ══════════════════════════════════════════════════════════════
+function setBtnLoading(btn, isLoading, loadingLabel){
+  if(!btn) return;
+  if(isLoading){
+    btn.dataset.originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> ' + (loadingLabel||'Working…');
+  } else {
+    btn.disabled = false;
+    if(btn.dataset.originalHtml) btn.innerHTML = btn.dataset.originalHtml;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// VENDOR ↔ CONTACTS LINKING
+// ══════════════════════════════════════════════════════════════
+function populateVendorSuggestions(){
+  const dl = document.getElementById('vendor-suggestions');
+  if(!dl) return;
+  const names = (DB.contacts||[]).map(c=>c.name).filter(Boolean);
+  dl.innerHTML = names.map(n=>`<option value="${n.replace(/"/g,'&quot;')}"></option>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// IMPORT CONTACTS FROM PHONE (Contact Picker API — Chrome/Android only)
+// Pulls only name + phone number per the request, nothing else.
+// ══════════════════════════════════════════════════════════════
+function contactPickerSupported(){
+  return !!(navigator.contacts && navigator.contacts.select && window.ContactsManager);
+}
+function initContactImportUI(){
+  const btn = document.getElementById('import-phone-btn');
+  const warn = document.getElementById('import-phone-unsupported');
+  if(!btn) return;
+  if(contactPickerSupported()){
+    btn.style.display = '';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+async function importFromPhone(){
+  if(!contactPickerSupported()){
+    const warn = document.getElementById('import-phone-unsupported');
+    if(warn) warn.style.display = '';
+    toast('Not supported in this browser','error');
+    return;
+  }
+  const btn = document.getElementById('import-phone-btn');
+  try{
+    setBtnLoading(btn, true, 'Pick contacts…');
+    const props = ['name','tel'];
+    const opts = {multiple:true};
+    const picked = await navigator.contacts.select(props, opts);
+    if(!picked || !picked.length){
+      setBtnLoading(btn, false);
+      return;
+    }
+    let added = 0;
+    picked.forEach(p=>{
+      const name = (p.name && p.name[0]) || 'Unnamed';
+      const phone = (p.tel && p.tel[0]) || '';
+      // Avoid exact duplicates
+      const dup = (DB.contacts||[]).find(c=>c.name===name && c.phone===phone);
+      if(dup) return;
+      DB.contacts.push({
+        id: Date.now()+'-'+Math.random().toString(36).slice(2,7),
+        name, phone, type:'Other', favourite:false, photos:[]
+      });
+      added++;
+    });
+    await saveDB();
+    renderContacts();
+    populateVendorSuggestions();
+    setBtnLoading(btn, false);
+    toast(added+' contact'+(added===1?'':'s')+' imported','success');
+  }catch(e){
+    setBtnLoading(btn, false);
+    if(e.name==='SecurityError') toast('Permission to access contacts was blocked','error');
+    else if(e.name!=='AbortError') toast('Could not import contacts','error');
+    // AbortError = user just cancelled the picker, no need to show an error
+  }
+}
 </script>
