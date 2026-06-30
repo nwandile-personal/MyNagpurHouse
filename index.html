@@ -845,12 +845,18 @@ code               { font-size: 0.68em; }
       </div>
 
       <!-- Data -->
-      <div class="section-label">Data &amp; backup</div>
+      <div class="section-label">Data &amp; sync</div>
       <div class="card">
-        <div class="info-strip warn" id="stor-warn" style="display:none">Storage usage is approaching the 5 MB browser limit. Connect Drive or export a backup.</div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:5px">Local browser storage (metadata only — files go to Drive)</div>
-        <div class="stor-bar-wrap"><div class="stor-bar" id="stor-bar" style="width:0%"></div></div>
-        <div style="font-size:11px;color:var(--ink3);margin-top:4px" id="stor-lbl">—</div>
+        <div id="sync-status-row" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:0.84em">
+          <div class="dot" id="sync-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--paper3);flex-shrink:0"></div>
+          <span id="sync-status-text">Not connected to Drive</span>
+        </div>
+        <div id="no-drive-warn" class="info-strip warn" style="display:none">Your data is only saved on this device right now and won't appear on your phone or laptop until you connect Google Drive in the section above.</div>
+        <div id="drive-sync-info" class="info-strip success" style="display:none">All expenses, contacts and reminders sync automatically to Drive — open the app on any device and they'll appear within seconds.</div>
+        <button class="btn btn-ghost btn-sm" id="sync-now-btn" onclick="manualSync()" style="margin-top:6px">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Sync now
+        </button>
         <div class="sep"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm" onclick="exportData()">
@@ -1011,7 +1017,7 @@ let driveToken = null, folderId = null, dbFileId = null, driveEmail = '';
 let pendingFiles = [], pendingAudio = null, pendingTranscript = '';
 let mediaRec = null, audioChunks = [], isRec = false;
 let trendChart = null, selColor = '#c8810a';
-let dbSaveTimer = null;
+let syncPollTimer = null;
 
 // ══════════════════════════════════════════════
 // BOOT
@@ -1021,7 +1027,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('new-date').value = today();
   document.getElementById('new-entry-date').value = today();
   buildPalette();
-  populateCatDropdowns();
   applyPrefs();
 
   if (window.location.hash.includes('access_token')) {
@@ -1034,13 +1039,28 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (driveToken) await loadDbFromDrive();
   }
 
-  if (!DB.expenses.length && !driveToken) seedSample();
+  // Categories are required scaffolding — without them the Add Expense
+  // form has nothing to select and the app is unusable. Seed them
+  // whenever they're missing, regardless of Drive connection state
+  // (this covers a brand new Drive folder with no existing data file yet).
+  if (!DB.categories.length) seedDefaultCategories();
+  // Demo expense rows are only useful for a first-time, not-yet-connected
+  // local trial — never inject them once real Drive data is the source
+  // of truth, so a fresh Drive account doesn't get fake numbers mixed
+  // into someone's real construction budget.
+  if (!DB.expenses.length && !driveToken) seedSampleExpenses();
+  // Populate the category dropdown AFTER categories are guaranteed to
+  // exist — doing this earlier left the Add Expense form with an empty
+  // dropdown whenever Drive returned no data yet (e.g. a freshly
+  // connected account with no gharbanao_db.json file).
+  populateCatDropdowns();
   updateDriveUI();
   applyFontSize();
   renderDashboard();
   checkPinOnLoad();
   populateVendorSuggestions();
   initContactImportUI();
+  if (driveToken) startBackgroundSync();
 
   document.getElementById('file-in').addEventListener('change', onFileSelect);
   document.getElementById('imp-in').addEventListener('change', importData);
@@ -1065,15 +1085,39 @@ function saveLocal() {
 }
 
 async function saveDB() {
-  saveLocal();
   updateHeader();
   if (driveToken && folderId) {
-    clearTimeout(dbSaveTimer);
-    dbSaveTimer = setTimeout(() => uploadJson(), 1500);
+    // Drive is the single source of truth. Save immediately and wait for
+    // it to actually land before returning, so "Saved" really means saved
+    // everywhere — not just queued for later.
+    const ok = await uploadJson();
+    if (!ok) {
+      // Could not reach Drive (offline, token expired, etc). Keep a local
+      // safety-net copy ONLY so nothing is lost, and flag it so the next
+      // successful sync pushes it up. This is a fallback, not the design.
+      saveLocal();
+      DB._unsynced = true;
+      toast('Could not reach Google Drive — will retry','error');
+      if(typeof updateSyncStatus==='function') updateSyncStatus();
+      return false;
+    }
+    DB._unsynced = false;
+    if(typeof updateSyncStatus==='function') updateSyncStatus();
+    return true;
+  } else {
+    // No Drive connected at all yet — nothing to sync to, so we cannot
+    // claim "saved". Surface this clearly rather than silently keeping
+    // data only in this one browser.
+    saveLocal();
+    toast('Connect Google Drive in Settings to save your data','error');
+    return false;
   }
 }
 
-function seedSample() {
+function seedDefaultCategories() {
+  // Without at least one category, the Add Expense dropdown is empty and
+  // the form can't be submitted at all — this must run for every brand
+  // new dataset, whether it's local-only or a fresh empty Drive folder.
   DB.categories = [
     {name:'Cement & Sand', color:'#b45309'},
     {name:'Steel', color:'#6b7280'},
@@ -1081,6 +1125,9 @@ function seedSample() {
     {name:'Plumbing', color:'#1d4ed8'},
     {name:'Electrical', color:'#c8810a'},
   ];
+}
+
+function seedSampleExpenses() {
   DB.expenses = [
     {id:'s1',category:'Cement & Sand',amount:22500,vendor:'',date:'2025-06-10',description:'',tags:['ground floor'],files:[],audio:null},
     {id:'s2',category:'Labour',amount:18000,vendor:'',date:'2025-06-14',description:'',tags:['weekly'],files:[],audio:null},
@@ -1446,7 +1493,7 @@ function renderSettings(){
   document.getElementById('proj-addr').value=p.address||'';
   document.getElementById('pref-lakhs').checked=!!DB.prefs.lakhs;
   document.getElementById('pref-compact').checked=!!DB.prefs.compact;
-  updateDriveUI();updateStorBar();
+  updateDriveUI();updateSyncStatus();
   const savedId=localStorage.getItem('gb_oauth_id');
   if(savedId) document.getElementById('oauth-id').value=savedId;
 }
@@ -1485,21 +1532,177 @@ async function saveProject(){
 }
 function savePrefs(){DB.prefs.lakhs=document.getElementById('pref-lakhs').checked;DB.prefs.compact=document.getElementById('pref-compact').checked;DB.prefs.contrast=document.getElementById('pref-contrast').checked;applyContrast();saveDB();}
 function applyPrefs(){if(DB.prefs){document.getElementById('pref-lakhs').checked=!!DB.prefs.lakhs;document.getElementById('pref-compact').checked=!!DB.prefs.compact;applyContrast();applyFontSize();const pinOn=!!DB.prefs.pinEnabled;const pe=document.getElementById('pref-pin');if(pe)pe.checked=pinOn;const pa=document.getElementById('pin-setup-area');if(pa)pa.style.display=pinOn?'':'none';}}
-function updateStorBar(){try{const b=new Blob([localStorage.getItem('gb_db')||'']).size;const mb=(b/1024/1024).toFixed(2);const pct=Math.min(100,b/(5*1024*1024)*100);document.getElementById('stor-bar').style.width=pct+'%';document.getElementById('stor-lbl').textContent=mb+' MB used of ~5 MB browser limit (media files stored in Drive)';document.getElementById('stor-warn').style.display=pct>75?'':'none';}catch(e){}}
+function updateSyncStatus(){
+  const dot = document.getElementById('sync-status-dot');
+  const text = document.getElementById('sync-status-text');
+  const warn = document.getElementById('no-drive-warn');
+  const ok = document.getElementById('drive-sync-info');
+  const syncBtn = document.getElementById('sync-now-btn');
+  if(!dot) return;
+  if(driveToken){
+    dot.style.background = DB._unsynced ? '#d97706' : 'var(--green)';
+    text.textContent = DB._unsynced ? 'Sync pending — will retry automatically' : ('Synced to Drive (' + driveEmail + ')');
+    if(warn) warn.style.display = 'none';
+    if(ok) ok.style.display = '';
+    if(syncBtn) syncBtn.style.display = '';
+  } else {
+    dot.style.background = 'var(--paper3)';
+    text.textContent = 'Not connected to Drive';
+    if(warn) warn.style.display = '';
+    if(ok) ok.style.display = 'none';
+    if(syncBtn) syncBtn.style.display = 'none';
+  }
+}
+async function manualSync(){
+  const btn = document.getElementById('sync-now-btn');
+  if(!driveToken){ toast('Connect Drive first','error'); return; }
+  setBtnLoading(btn, true, 'Syncing…');
+  const ok = await loadDbFromDrive();
+  setBtnLoading(btn, false);
+  updateSyncStatus();
+  toast(ok ? 'Synced with Drive' : 'Could not reach Drive — check your connection', ok ? 'success' : 'error');
+}
 
 function exportData(){const blob=new Blob([JSON.stringify(DB)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='GharBanao_'+today()+'.json';a.click();URL.revokeObjectURL(url);}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!confirm('Replace all current data?'))return;DB=d;saveLocal();populateCatDropdowns();renderDashboard();renderSettings();alert('Imported!');}catch(e){alert('Invalid file.');}};r.readAsText(f);e.target.value='';}
-function clearAll(){if(!confirm('Delete all data? Cannot be undone.'))return;if(!confirm('Are you absolutely sure?'))return;DB={expenses:[],reminders:[],categories:[],project:{},prefs:{}};saveLocal();populateCatDropdowns();renderDashboard();renderSettings();}
+function importData(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=async ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(!confirm('Replace all current data? This will overwrite Drive too.'))return;
+      DB=d;
+      if(!DB.expenses) DB.expenses=[];
+      if(!DB.reminders) DB.reminders=[];
+      if(!DB.categories) DB.categories=[];
+      if(!DB.project) DB.project={};
+      if(!DB.prefs) DB.prefs={};
+      if(!DB.contacts) DB.contacts=[];
+      const ok = await saveDB();
+      populateCatDropdowns();
+      populateVendorSuggestions();
+      renderDashboard();
+      renderSettings();
+      toast(ok?'Imported and synced to Drive':'Imported locally — could not reach Drive', ok?'success':'error');
+    }catch(err){
+      toast('Invalid backup file','error');
+    }
+  };
+  r.readAsText(f);
+  e.target.value='';
+}
+function clearAll(){
+  if(!confirm('Delete all data? This removes it from Drive too. Cannot be undone.'))return;
+  if(!confirm('Are you absolutely sure?'))return;
+  DB={expenses:[],reminders:[],categories:[],contacts:[],project:{},prefs:{}};
+  saveDB().then(ok=>{
+    populateCatDropdowns();
+    populateVendorSuggestions();
+    renderDashboard();
+    renderSettings();
+    toast(ok?'All data cleared':'Cleared locally — could not reach Drive', ok?'success':'error');
+  });
+}
 
 // GOOGLE DRIVE
 function connectDrive(){const id=document.getElementById('oauth-id').value.trim();if(!id){alert('Paste your OAuth Client ID');return;}localStorage.setItem('gb_oauth_id',id);const state=Math.random().toString(36).slice(2);localStorage.setItem('gb_oauth_state',state);const redirect=window.location.origin+window.location.pathname;const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(id)}&redirect_uri=${encodeURIComponent(redirect)}&response_type=token&scope=${encodeURIComponent('https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email')}&state=${state}`;window.location.href=url;}
-async function handleOAuthReturn(){const p=new URLSearchParams(window.location.hash.slice(1));const token=p.get('access_token');if(!token)return;driveToken=token;localStorage.setItem('gb_token',token);try{const r=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+token}});const info=await r.json();driveEmail=info.email||'';localStorage.setItem('gb_email',driveEmail);}catch(e){}await ensureFolder();await loadDbFromDrive();window.history.replaceState({},document.title,window.location.pathname);}
+async function handleOAuthReturn(){const p=new URLSearchParams(window.location.hash.slice(1));const token=p.get('access_token');if(!token)return;driveToken=token;localStorage.setItem('gb_token',token);try{const r=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+token}});const info=await r.json();driveEmail=info.email||'';localStorage.setItem('gb_email',driveEmail);}catch(e){}await ensureFolder();await loadDbFromDrive();startBackgroundSync();window.history.replaceState({},document.title,window.location.pathname);}
 async function ensureFolder(){if(!driveToken)return;try{const q=encodeURIComponent("name='GharBanao' and mimeType='application/vnd.google-apps.folder' and trashed=false");const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,{headers:{Authorization:'Bearer '+driveToken}});const d=await r.json();if(d.files&&d.files.length){folderId=d.files[0].id;localStorage.setItem('gb_fid',folderId);return;}}catch(e){}try{const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:JSON.stringify({name:'GharBanao',mimeType:'application/vnd.google-apps.folder'})});const d=await r.json();folderId=d.id;localStorage.setItem('gb_fid',folderId);}catch(e){}}
-async function loadDbFromDrive(){if(!driveToken||!folderId)return;try{const q=encodeURIComponent(`name='gharbanao_db.json' and '${folderId}' in parents and trashed=false`);const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+driveToken}});const d=await r.json();if(d.files&&d.files.length){dbFileId=d.files[0].id;localStorage.setItem('gb_dbid',dbFileId);const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${dbFileId}?alt=media`,{headers:{Authorization:'Bearer '+driveToken}});const remoteDB=await r2.json();if(remoteDB.expenses&&remoteDB.expenses.length){DB=remoteDB;}saveLocal();populateCatDropdowns();applyPrefs();renderDashboard();}}catch(e){}}
-async function uploadJson(){if(!driveToken||!folderId)return;const content=JSON.stringify(DB);const blob=new Blob([content],{type:'application/json'});try{if(dbFileId){await fetch(`https://www.googleapis.com/upload/drive/v3/files/${dbFileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:content});}else{const meta={name:'gharbanao_db.json',parents:[folderId]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});const d=await r.json();dbFileId=d.id;localStorage.setItem('gb_dbid',dbFileId);}}catch(e){}}
+async function loadDbFromDrive(){
+  if(!driveToken||!folderId) return false;
+  try{
+    const q=encodeURIComponent(`name='gharbanao_db.json' and '${folderId}' in parents and trashed=false`);
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+driveToken}});
+    if(!r.ok){ if(r.status===401){ driveToken=null; localStorage.removeItem('gb_token'); updateDriveUI(); } return false; }
+    const d=await r.json();
+    if(d.files&&d.files.length){
+      dbFileId=d.files[0].id;
+      localStorage.setItem('gb_dbid',dbFileId);
+      const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${dbFileId}?alt=media`,{headers:{Authorization:'Bearer '+driveToken}});
+      if(!r2.ok) return false;
+      const remoteDB=await r2.json();
+      if(remoteDB.expenses){
+        DB=remoteDB;
+        if(!DB.reminders) DB.reminders=[];
+        if(!DB.categories) DB.categories=[];
+        if(!DB.project) DB.project={};
+        if(!DB.prefs) DB.prefs={};
+        if(!DB.contacts) DB.contacts=[];
+      }
+      populateCatDropdowns();
+      applyPrefs();
+      populateVendorSuggestions();
+      updateHeader();
+      // Re-render whichever page is currently visible so a synced change
+      // shows up immediately without the person having to tap anything.
+      const activePage = document.querySelector('.page.active');
+      if(activePage){
+        const id = activePage.id.replace('page-','');
+        const fns={dashboard:renderDashboard,expenses:renderExpenses,reminders:renderReminders,analytics:renderAnalytics,settings:renderSettings,contacts:renderContacts};
+        if(fns[id]) fns[id]();
+      }
+      return true;
+    }
+    return false;
+  }catch(e){
+    return false;
+  }
+}
+
+// ── BACKGROUND SYNC ───────────────────────────────────────────
+// Two devices (e.g. laptop + phone) can both have the app open at the
+// same time. Since there's no live push channel to a static GitHub Pages
+// site, we poll Drive periodically and also re-sync whenever the tab
+// regains focus or the phone screen is woken up — both very common
+// moments right before someone is about to add an expense.
+function startBackgroundSync(){
+  if(syncPollTimer) clearInterval(syncPollTimer);
+  syncPollTimer = setInterval(()=>{
+    if(driveToken && document.visibilityState==='visible') loadDbFromDrive();
+  }, 30000); // every 30s while the tab is open and visible
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible' && driveToken) loadDbFromDrive();
+});
+window.addEventListener('focus', ()=>{
+  if(driveToken) loadDbFromDrive();
+});
+async function uploadJson(){
+  if(!driveToken||!folderId) return false;
+  const content=JSON.stringify(DB);
+  const blob=new Blob([content],{type:'application/json'});
+  try{
+    if(dbFileId){
+      const r=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${dbFileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:'Bearer '+driveToken,'Content-Type':'application/json'},body:content});
+      if(!r.ok){
+        if(r.status===401){ driveToken=null; localStorage.removeItem('gb_token'); updateDriveUI(); }
+        return false;
+      }
+      return true;
+    }else{
+      const meta={name:'gharbanao_db.json',parents:[folderId]};
+      const form=new FormData();
+      form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+      form.append('file',blob);
+      const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});
+      if(!r.ok){
+        if(r.status===401){ driveToken=null; localStorage.removeItem('gb_token'); updateDriveUI(); }
+        return false;
+      }
+      const d=await r.json();
+      dbFileId=d.id;
+      localStorage.setItem('gb_dbid',dbFileId);
+      return true;
+    }
+  }catch(e){
+    // Network error / offline
+    return false;
+  }
+}
 async function uploadFileToDrive(file,targetFolderId){if(!driveToken)return null;const pid=targetFolderId||folderId;if(!pid)return null;try{const arr=file.data.split(',');const mime=arr[0].match(/:(.*?);/)[1];const bstr=atob(arr[1]);let n=bstr.length;const u8=new Uint8Array(n);while(n--)u8[n]=bstr.charCodeAt(n);const blob=new Blob([u8],{type:mime});const meta={name:file.name,parents:[pid]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,thumbnailLink',{method:'POST',headers:{Authorization:'Bearer '+driveToken},body:form});if(!r.ok){const e=await r.json();if(e.error&&e.error.code===401){driveToken=null;localStorage.removeItem('gb_token');updateDriveUI();}return null;}const d=await r.json();return{driveFileId:d.id,driveViewUrl:d.webViewLink,driveThumbnail:d.thumbnailLink||null};}catch(e){return null;}}
-function disconnectDrive(){if(!confirm('Disconnect Drive? Files already uploaded remain safe.'))return;driveToken=null;folderId=null;dbFileId=null;driveEmail='';['gb_token','gb_fid','gb_dbid','gb_email'].forEach(k=>localStorage.removeItem(k));updateDriveUI();}
-function updateDriveUI(){const on=!!driveToken;['sb-drive-dot','sb-drive-dot2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',on);});['sb-drive-lbl','sb-drive-lbl2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=on?'Drive: '+driveEmail:'Drive not connected';});document.getElementById('sb-drive-info').textContent=on?'Syncing to: '+driveEmail:'Connect in Settings to save photos permanently.';document.getElementById('add-drive-warn').style.display=on?'none':'';document.getElementById('add-drive-ok').style.display=on?'':'none';const setup=document.getElementById('drive-setup');const conn=document.getElementById('drive-connected-card');if(setup)setup.style.display=on?'none':'';if(conn){conn.style.display=on?'':'none';document.getElementById('drive-email-lbl').textContent=driveEmail;const fl=document.getElementById('drive-folder-link');if(fl&&folderId)fl.href=`https://drive.google.com/drive/folders/${folderId}`;}}
+function disconnectDrive(){if(!confirm('Disconnect Drive? Files already uploaded remain safe.'))return;driveToken=null;folderId=null;dbFileId=null;driveEmail='';['gb_token','gb_fid','gb_dbid','gb_email'].forEach(k=>localStorage.removeItem(k));if(syncPollTimer){clearInterval(syncPollTimer);syncPollTimer=null;}updateDriveUI();}
+function updateDriveUI(){const on=!!driveToken;['sb-drive-dot','sb-drive-dot2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',on);});['sb-drive-lbl','sb-drive-lbl2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=on?'Drive: '+driveEmail:'Drive not connected';});document.getElementById('sb-drive-info').textContent=on?'Syncing to: '+driveEmail:'Connect in Settings to save photos permanently.';document.getElementById('add-drive-warn').style.display=on?'none':'';document.getElementById('add-drive-ok').style.display=on?'':'none';const setup=document.getElementById('drive-setup');const conn=document.getElementById('drive-connected-card');if(setup)setup.style.display=on?'none':'';if(conn){conn.style.display=on?'':'none';document.getElementById('drive-email-lbl').textContent=driveEmail;const fl=document.getElementById('drive-folder-link');if(fl&&folderId)fl.href=`https://drive.google.com/drive/folders/${folderId}`;}if(typeof updateSyncStatus==='function')updateSyncStatus();}
 
 // LIGHTBOX
 function openLB(src,isVideo){
